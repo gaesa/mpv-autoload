@@ -1,0 +1,29 @@
+name: Build and Release
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - autoload.ts
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Nix
+        uses: cachix/install-nix-action@v22
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Check
+        run: |
+          nix build
+          nix flake check
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: result/autoload.js
