@@ -5,6 +5,12 @@ on:
       - main
     paths:
       - autoload.ts
+  pull_request:
+    branches:
+      - main
+    paths:
+      - autoload.ts
+  workflow_dispatch:
 
 jobs:
   publish:
