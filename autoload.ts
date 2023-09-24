@@ -27,7 +27,7 @@ Array.prototype.remove = function (index: number): [any, any[]] {
 function sorted(
   list: any[],
   key: (arg: any) => any = function (x) {
-    x;
+    return x;
   },
 ) {
   return list.slice().sort(function (a, b) {
