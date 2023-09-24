@@ -29,8 +29,15 @@ jobs:
           nix build
           nix flake check
 
+      - name: Generate release tag
+        id: tag
+        run: |
+          echo "release_tag=$(date +%Y.%m.%d_%H-%M)" >> "$GITHUB_ENV"
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: result/autoload.js
+          tag_name: ${{ env.release_tag }}
+          files: |
+            result/autoload.js
