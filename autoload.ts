@@ -174,5 +174,7 @@ mp.register_event("start-file", function () {
   var pl_count = mp.get_property_number("playlist-count", 1) as number;
   if (checkPlaylist(pl_count)) {
     main();
-  } else return;
+  } else {
+    return;
+  }
 });
