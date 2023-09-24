@@ -36,7 +36,7 @@ cp dist/autoload.js ~/.config/mpv/scripts
 
 Just move `autoload.js` to your mpv `scripts` folder and it will work out of the box. Enjoy your videos without any hassle!
 
-## Improvements Over `autoload.lua`
+## Improvements Over [ `autoload.lua` ](https://github.com/mpv-player/mpv/blob/master/TOOLS/lua/autoload.lua)
 
 `autoload.ts` is a refactored and optimized version of the original `autoload.lua` script from the mpv player. Here are some key improvements:
 
