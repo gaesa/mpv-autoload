@@ -86,10 +86,10 @@ function subprocess(args: string[]) {
   });
 }
 
-function keysToTable(keys: any[]) {
+function keysToTable(keys: any[], value: any = true) {
   var table: { [key: string]: any } = {}; //in js, object can only have string keys
   keys.forEach(function (key) {
-    table[key] = true;
+    table[key] = value;
   });
   return table;
 }
@@ -109,7 +109,7 @@ function splitExt(path: string): [string, string] {
 
 function getMimetype(file: string): string {
   var extension = splitExt(file)[1];
-  return keysToTable([".ts", ".bak"])[extension]
+  return extension in keysToTable([".ts", ".bak"])
     ? subprocess(["/usr/bin/file", "-Lb", "--mime-type", file]).stdout.trimEnd()
     : subprocess([
         "/usr/bin/xdg-mime",
@@ -119,11 +119,15 @@ function getMimetype(file: string): string {
       ]).stdout.trimEnd();
 }
 
-function getVideos(dir: string): string[] {
+function getFiles(dir: string): string[] {
+  var allowedTypes = ["video", "audio"];
+  var allowedTypesTable = keysToTable(allowedTypes);
   var files = utils.readdir(dir, "files") as string[];
   return sorted(
     files.filter(function (file: string) {
-      return getMimetype(file).startsWith("video");
+      var mimeType = getMimetype(file);
+      var mainMimetype = mimeType.slice(0, mimeType.indexOf("/"));
+      return mainMimetype in allowedTypesTable;
     }),
     natsort,
   );
@@ -153,7 +157,7 @@ function main() {
   var [dir, file] = utils.split_path(path) as [string, string];
   msg.trace("dir: " + dir + ", file: " + file);
 
-  var files = getVideos(dir);
+  var files = getFiles(dir);
   if (files.length === 0) {
     msg.verbose("no other files or directories in directory");
     return;
