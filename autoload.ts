@@ -24,11 +24,6 @@ Array.prototype.remove = function (index: number): [any, any[]] {
   return [copy.splice(index, 1)[0], copy];
 };
 
-interface PlaylistEntry {
-  filename: string;
-}
-type Playlist = PlaylistEntry[];
-
 function sorted(
   list: any[],
   key: (arg: any) => any = function (x) {
