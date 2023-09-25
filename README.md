@@ -46,3 +46,13 @@ Just move `autoload.js` to your mpv `scripts` folder and it will work out of the
 - **Simplified Logic**: The main logic of the script has been simplified, making it more straightforward and easier to follow.
 
 With these improvements, `autoload.ts` provides a cleaner, more efficient, and ready to use approach to automatically loading video and audio files into the mpv player’s playlist.
+
+## Limitation
+
+The `autoload.ts` script uses the `getMimetype` function to filter all video and audio files within a directory. Note that this operation is not recursive, as the `mp.utils.readdir` function does not return files recursively.
+
+The `getMimetype` function employs the `mp.command_native` function to call an external command and obtain the precise mime type of each file. As this operation is performed individually for each file, it can take over 3 seconds to return results for a directory containing more than 200 files.
+
+Although MPV provides the `mp.command_native_async` function for asynchronous operations, I have not found an effective way to wait for all commands to return results before proceeding. However, the good news is that this script will not block your MPV player, even though it currently does not utilize `mp.command_native_async.`
+
+Any suggestions or contributions on how to speed up this operation are welcome.
