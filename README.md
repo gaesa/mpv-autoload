@@ -2,7 +2,7 @@
 
 ## Features
 
-- **Automatic Playlist Generation**: The script automatically identifies and loads video files from the same directory into your playlist.
+- **Automatic Playlist Generation**: The script automatically identifies and loads video and audio files from the same directory into your playlist.
 - **Mimetype Checks**:Instead of relying on file extensions, the script uses mimetype checks for more accurate file type identification.
 
 ## Installation
@@ -34,7 +34,7 @@ cp dist/autoload.js ~/.config/mpv/scripts
 
 ## Usage
 
-Just move `autoload.js` to your mpv `scripts` folder and it will work out of the box. Enjoy your videos without any hassle!
+Just move `autoload.js` to your mpv `scripts` folder and it will work out of the box. Enjoy your video and audio without any hassle!
 
 ## Improvements Over [ `autoload.lua` ](https://github.com/mpv-player/mpv/blob/master/TOOLS/lua/autoload.lua)
 
@@ -45,4 +45,4 @@ Just move `autoload.js` to your mpv `scripts` folder and it will work out of the
 - **Efficiency**: Complex nested loops and lengthy functions have been eliminated, resulting in a more efficient script.
 - **Simplified Logic**: The main logic of the script has been simplified, making it more straightforward and easier to follow.
 
-With these improvements, `autoload.ts` provides a cleaner, more efficient, and ready to use approach to automatically loading video files into the mpv player’s playlist.
+With these improvements, `autoload.ts` provides a cleaner, more efficient, and ready to use approach to automatically loading video and audio files into the mpv player’s playlist.
