@@ -43,7 +43,7 @@ function sorted(
       }
       if (keyA.length < keyB.length) {
         return -1;
-      } else if ((keyA.length = keyB.length)) {
+      } else if (keyA.length === keyB.length) {
         return 0;
       } else {
         return 1;
@@ -51,7 +51,7 @@ function sorted(
     } else {
       if (keyA < keyB) {
         return -1;
-      } else if ((keyA = keyB)) {
+      } else if (keyA === keyB) {
         return 0;
       } else {
         return 1;
