@@ -3,7 +3,7 @@
 ## Features
 
 - **Automatic Playlist Generation**: The script automatically identifies and loads video and audio files from the same directory into your playlist.
-- **Mimetype Checks**:Instead of relying on file extensions, the script uses mimetype checks for more accurate file type identification.
+- **Mimetype Checks**: Instead of relying on file extensions, the script uses mimetype checks for more accurate file type identification.
 
 ## Installation
 
