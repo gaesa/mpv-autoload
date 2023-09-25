@@ -7,7 +7,7 @@
 
 ## Installation
 
-### Direct Download:
+### Direct Download
 
 1. Download the `autoload.js` from the _Releases_.
 2. Move the downloaded `autoload.js` to your mpv `scripts` folder.
