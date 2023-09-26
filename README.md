@@ -19,7 +19,7 @@
 ```shell
 git clone https://github.com/gaesa/mpv-autoload
 cd mpv-autoload
-nix build && mkdir dist && chmod -R u+rw dist && cp -r result/. dist
+nix build && mkdir dist && chmod -R u+rw dist && cp -r result/. dist && chmod -R u+rw dist
 cp dist/autoload.js ~/.config/mpv/scripts
 ```
 
