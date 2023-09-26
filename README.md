@@ -19,8 +19,8 @@
 ```shell
 git clone https://github.com/gaesa/mpv-autoload
 cd mpv-autoload
-nix build
-cp result/autoload.js ~/.config/mpv/scripts
+nix build && mkdir dist && chmod -R u+rw dist && cp -r result/. dist
+cp dist/autoload.js ~/.config/mpv/scripts
 ```
 
 #### Manually using TypeScript
