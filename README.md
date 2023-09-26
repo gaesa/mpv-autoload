@@ -9,7 +9,7 @@
 
 ### Direct Download
 
-1. Download the **newest** version of `autoload.js` from the _Releases_.
+1. Download the **latest** version of `autoload.js` from the _Releases_.
 2. Move the downloaded `autoload.js` to your mpv `scripts` folder.
 
 ### Building from source
