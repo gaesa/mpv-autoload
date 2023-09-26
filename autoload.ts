@@ -2,13 +2,7 @@ var utils = mp.utils;
 var msg = mp.msg;
 
 interface String {
-  startsWith(prefix: string): boolean;
   trimEnd(): string;
-}
-if (String.prototype.startsWith === undefined) {
-  String.prototype.startsWith = function (prefix: string): boolean {
-    return this.match("^" + prefix) !== null;
-  };
 }
 if (String.prototype.trimEnd === undefined) {
   String.prototype.trimEnd = function (): string {
