@@ -71,13 +71,29 @@ function natsort(s: string, _nsRe: RegExp = /(\d+)/, _digRe: RegExp = /^\d+$/) {
   });
 }
 
-function subprocess(args: string[]) {
-  return mp.command_native({
+function subprocess(args: string[], check: boolean = false) {
+  var p = mp.command_native({
     args: args,
     name: "subprocess",
     playback_only: false,
     capture_stdout: true,
   });
+  if (check) {
+    var status = p.status as number;
+    if (status === 0) {
+      return p;
+    } else {
+      throw new Error(
+        p.stderr +
+          "Command " +
+          JSON.stringify(args) +
+          " returned non-zero exit status " +
+          JSON.stringify(status),
+      );
+    }
+  } else {
+    return p;
+  }
 }
 
 function keysToTable(keys: any[], value: any = true) {
@@ -101,16 +117,33 @@ function splitExt(path: string): [string, string] {
   }
 }
 
-function getMimetype(file: string): string {
+function getMimetype(file: string): [string, string] {
   var extension = splitExt(file)[1];
-  return extension in keysToTable([".ts", ".bak"])
-    ? subprocess(["/usr/bin/file", "-Lb", "--mime-type", file]).stdout.trimEnd()
-    : subprocess([
-        "/usr/bin/xdg-mime",
-        "query",
-        "filetype",
-        file,
-      ]).stdout.trimEnd();
+
+  var fileArgs = ["file", "-Lb", "--mime-type", file];
+  var xdgArgs = ["xdg-mime", "query", "filetype", file];
+  var args =
+    extension in keysToTable([".ts", ".bak", ".txt", ".TXT"])
+      ? fileArgs
+      : xdgArgs;
+
+  var str: string = subprocess(args, true).stdout.trimEnd();
+  var mimeType = str.split("/");
+  if (mimeType.length !== 2) {
+    if (args === xdgArgs) {
+      var newStr = subprocess(fileArgs, true).stdout.trimEnd() as string;
+      var newType = newStr.split("/");
+      if (newType.length !== 2) {
+        throw new Error(JSON.stringify(fileArgs) + " returns: " + newStr);
+      } else {
+        return newType as [string, string];
+      }
+    } else {
+      throw new Error(JSON.stringify(fileArgs) + " returns: " + str);
+    }
+  } else {
+    return mimeType as [string, string];
+  }
 }
 
 function getFiles(dir: string): string[] {
@@ -120,8 +153,7 @@ function getFiles(dir: string): string[] {
   return sorted(
     files.filter(function (file: string) {
       var mimeType = getMimetype(file);
-      var mainMimetype = mimeType.slice(0, mimeType.indexOf("/"));
-      return mainMimetype in allowedTypesTable;
+      return mimeType[0] in allowedTypesTable;
     }),
     natsort,
   );
