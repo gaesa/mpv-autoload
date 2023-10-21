@@ -1,11 +1,11 @@
-var utils = mp.utils;
-var msg = mp.msg;
+const utils = mp.utils;
+const msg = mp.msg;
 
 interface String {
   trimEnd(): string;
 }
 if (String.prototype.trimEnd === undefined) {
-  String.prototype.trimEnd = function (): string {
+  String.prototype.trimEnd = function(): string {
     return this.replace(/\s+$/, "");
   };
 }
@@ -13,22 +13,21 @@ if (String.prototype.trimEnd === undefined) {
 interface Array<T> {
   remove(index: number): [T, Array<T>];
 }
-Array.prototype.remove = function (index: number): [any, any[]] {
-  var copy = this.slice();
+Array.prototype.remove = function(index: number): [any, any[]] {
+  const copy = this.slice();
   return [copy.splice(index, 1)[0], copy];
 };
 
 function sorted(
   list: any[],
-  key: (arg: any) => any = function (x) {
+  key: (arg: any) => any = function(x) {
     return x;
   },
 ) {
-  return list.slice().sort(function (a, b) {
-    var keyA = key(a);
-    var keyB = key(b);
+  return list.slice().sort(function(a, b) {
+    const [keyA, keyB] = [key(a), key(b)];
     if (Array.isArray(keyA) && Array.isArray(keyB)) {
-      for (var i = 0; i < keyA.length && i < keyB.length; i++) {
+      for (let i = 0; i < keyA.length && i < keyB.length; i++) {
         if (keyA[i] < keyB[i]) {
           return -1;
         } else if (keyA[i] > keyB[i]) {
@@ -59,36 +58,36 @@ function natsort(s: string, _nsRe: RegExp = /(\d+)/, _digRe: RegExp = /^\d+$/) {
     return _digRe.test(n);
   }
 
-  var splitList = s.split(_nsRe);
+  const splitList = s.split(_nsRe);
   if (splitList[0] === "") {
     splitList.shift();
   }
   if (splitList.length !== 0 && splitList[splitList.length - 1] === "") {
     splitList.pop();
   }
-  return splitList.map(function (text: string) {
+  return splitList.map(function(text: string) {
     return isDigit(text) ? parseInt(text, 10) : text;
   });
 }
 
 function subprocess(args: string[], check: boolean = false) {
-  var p = mp.command_native({
+  const p = mp.command_native({
     args: args,
     name: "subprocess",
     playback_only: false,
     capture_stdout: true,
   });
   if (check) {
-    var status = p.status as number;
+    const status = p.status as number;
     if (status === 0) {
       return p;
     } else {
       throw new Error(
         p.stderr +
-          "Command " +
-          JSON.stringify(args) +
-          " returned non-zero exit status " +
-          JSON.stringify(status),
+        "Command " +
+        JSON.stringify(args) +
+        " returned non-zero exit status " +
+        JSON.stringify(status),
       );
     }
   } else {
@@ -97,16 +96,16 @@ function subprocess(args: string[], check: boolean = false) {
 }
 
 function keysToTable(keys: any[], value: any = true) {
-  var table: { [key: string]: any } = {}; //in js, object can only have string keys
-  keys.forEach(function (key) {
+  const table: { [key: string]: any } = {}; //in js, object can only have string keys
+  keys.forEach(function(key) {
     table[key] = value;
   });
   return table;
 }
 
 function splitExt(path: string): [string, string] {
-  var [dir, file] = utils.split_path(path) as [string, string];
-  var lastDotIndex = file.lastIndexOf(".");
+  const [dir, file] = utils.split_path(path) as [string, string];
+  const lastDotIndex = file.lastIndexOf(".");
   if (lastDotIndex === 0 || lastDotIndex == -1) {
     return [path, ""];
   } else {
@@ -118,21 +117,21 @@ function splitExt(path: string): [string, string] {
 }
 
 function getMimetype(file: string): [string, string] {
-  var extension = splitExt(file)[1];
+  const extension = splitExt(file)[1];
 
-  var fileArgs = ["file", "-Lb", "--mime-type", file];
-  var xdgArgs = ["xdg-mime", "query", "filetype", file];
-  var args =
+  const fileArgs = ["file", "-Lb", "--mime-type", file];
+  const xdgArgs = ["xdg-mime", "query", "filetype", file];
+  const args =
     extension in keysToTable([".ts", ".bak", ".txt", ".TXT"])
       ? fileArgs
       : xdgArgs;
 
-  var str: string = subprocess(args, true).stdout.trimEnd();
-  var mimeType = str.split("/");
+  const str: string = subprocess(args, true).stdout.trimEnd();
+  const mimeType = str.split("/");
   if (mimeType.length !== 2) {
     if (args === xdgArgs) {
-      var newStr = subprocess(fileArgs, true).stdout.trimEnd() as string;
-      var newType = newStr.split("/");
+      const newStr = subprocess(fileArgs, true).stdout.trimEnd() as string;
+      const newType = newStr.split("/");
       if (newType.length !== 2) {
         throw new Error(JSON.stringify(fileArgs) + " returns: " + newStr);
       } else {
@@ -147,12 +146,12 @@ function getMimetype(file: string): [string, string] {
 }
 
 function getFiles(dir: string): string[] {
-  var allowedTypes = ["video", "audio"];
-  var allowedTypesTable = keysToTable(allowedTypes);
-  var files = utils.readdir(dir, "files") as string[];
+  const allowedTypes = ["video", "audio"];
+  const allowedTypesTable = keysToTable(allowedTypes);
+  const files = utils.readdir(dir, "files") as string[];
   return sorted(
-    files.filter(function (file: string) {
-      var mimeType = getMimetype(file);
+    files.filter(function(file: string) {
+      const mimeType = getMimetype(file);
       return mimeType[0] in allowedTypesTable;
     }),
     natsort,
@@ -169,7 +168,7 @@ function checkPlaylist(pl_count: number) {
 }
 
 function fdCurrentEntryPos(files: string[], file: string) {
-  var current = files.indexOf(file);
+  const current = files.indexOf(file);
   if (current === -1) {
     return null;
   } else {
@@ -179,20 +178,20 @@ function fdCurrentEntryPos(files: string[], file: string) {
 }
 
 function main() {
-  var path = mp.get_property("path", "");
-  var [dir, file] = utils.split_path(path) as [string, string];
+  const path = mp.get_property("path", "");
+  const [dir, file] = utils.split_path(path) as [string, string];
   msg.trace("dir: " + dir + ", file: " + file);
 
-  var files = getFiles(dir);
+  const files = getFiles(dir);
   if (files.length === 0) {
     msg.verbose("no other files or directories in directory");
     return;
   } else {
-    var current = fdCurrentEntryPos(files, file);
+    const current = fdCurrentEntryPos(files, file);
     if (current === null) {
       return;
     } else {
-      files.remove(current)[1].forEach(function (file) {
+      files.remove(current)[1].forEach(function(file) {
         mp.commandv("loadfile", file, "append");
       });
       mp.commandv("playlist-move", 0, current + 1);
@@ -200,8 +199,8 @@ function main() {
   }
 }
 
-mp.register_event("start-file", function () {
-  var pl_count = mp.get_property_number("playlist-count", 1) as number;
+mp.register_event("start-file", function() {
+  const pl_count = mp.get_property_number("playlist-count", 1) as number;
   if (checkPlaylist(pl_count)) {
     main();
   } else {
