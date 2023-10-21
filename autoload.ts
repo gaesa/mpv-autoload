@@ -53,21 +53,23 @@ function sorted(
   });
 }
 
-function natsort(s: string, _nsRe: RegExp = /(\d+)/, _digRe: RegExp = /^\d+$/) {
+function natsort(strings: string[]): string[] {
   function isDigit(n: string) {
-    return _digRe.test(n);
+    return /^\d+$/.test(n);
   }
-
-  const splitList = s.split(_nsRe);
-  if (splitList[0] === "") {
-    splitList.shift();
+  function key(s: string) {
+    const splitList = s.split(/(\d+)/);
+    if (splitList[0] === "") {
+      splitList.shift();
+    }
+    if (splitList.length > 0 && splitList[splitList.length - 1] === "") {
+      splitList.pop();
+    }
+    return splitList.map(function(text: string) {
+      return isDigit(text) ? parseInt(text, 10) : text;
+    });
   }
-  if (splitList.length !== 0 && splitList[splitList.length - 1] === "") {
-    splitList.pop();
-  }
-  return splitList.map(function(text: string) {
-    return isDigit(text) ? parseInt(text, 10) : text;
-  });
+  return sorted(strings, key);
 }
 
 function subprocess(args: string[], check: boolean = false) {
@@ -149,12 +151,11 @@ function getFiles(dir: string): string[] {
   const allowedTypes = ["video", "audio"];
   const allowedTypesTable = keysToTable(allowedTypes);
   const files = utils.readdir(dir, "files") as string[];
-  return sorted(
+  return natsort(
     files.filter(function(file: string) {
       const mimeType = getMimetype(file);
       return mimeType[0] in allowedTypesTable;
     }),
-    natsort,
   );
 }
 
