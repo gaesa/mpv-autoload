@@ -63,7 +63,7 @@ function natsort(s: string, _nsRe: RegExp = /(\d+)/, _digRe: RegExp = /^\d+$/) {
   if (splitList[0] === "") {
     splitList.shift();
   }
-  if (splitList[splitList.length - 1] === "") {
+  if (splitList.length !== 0 && splitList[splitList.length - 1] === "") {
     splitList.pop();
   }
   return splitList.map(function (text: string) {
