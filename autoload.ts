@@ -5,7 +5,7 @@ interface String {
   trimEnd(): string;
 }
 if (String.prototype.trimEnd === undefined) {
-  String.prototype.trimEnd = function(): string {
+  String.prototype.trimEnd = function (): string {
     return this.replace(/\s+$/, "");
   };
 }
@@ -13,18 +13,18 @@ if (String.prototype.trimEnd === undefined) {
 interface Array<T> {
   remove(index: number): [T, Array<T>];
 }
-Array.prototype.remove = function(index: number): [any, any[]] {
+Array.prototype.remove = function (index: number): [any, any[]] {
   const copy = this.slice();
   return [copy.splice(index, 1)[0], copy];
 };
 
 function sorted(
   list: any[],
-  key: (arg: any) => any = function(x) {
+  key: (arg: any) => any = function (x) {
     return x;
   },
 ) {
-  return list.slice().sort(function(a, b) {
+  return list.slice().sort(function (a, b) {
     const [keyA, keyB] = [key(a), key(b)];
     if (Array.isArray(keyA) && Array.isArray(keyB)) {
       for (let i = 0; i < keyA.length && i < keyB.length; i++) {
@@ -65,41 +65,45 @@ function natsort(strings: string[]): string[] {
     if (splitList.length > 0 && splitList[splitList.length - 1] === "") {
       splitList.pop();
     }
-    return splitList.map(function(text: string) {
+    return splitList.map(function (text: string) {
       return isDigit(text) ? parseInt(text, 10) : text;
     });
   }
   return sorted(strings, key);
 }
 
-function subprocess(args: string[], check: boolean = false) {
-  const p = mp.command_native({
-    args: args,
-    name: "subprocess",
-    playback_only: false,
-    capture_stdout: true,
+var Promise = require("./nopromise/nopromise") as PromiseConstructor;
+
+type ProcessOutput = {
+  status: number;
+  stdout: string;
+  stderr: string;
+};
+
+function subprocessAsync(args: string[]): Promise<ProcessOutput> {
+  return new Promise((resolve, reject) => {
+    mp.command_native_async(
+      {
+        args: args,
+        name: "subprocess",
+        playback_only: false,
+        capture_stdout: true,
+        capture_stderr: true,
+      },
+      (success: boolean, result: ProcessOutput, error: string) => {
+        if (success) {
+          resolve(result);
+        } else {
+          reject("Command " + JSON.stringify(args) + ":\n" + error);
+        }
+      },
+    );
   });
-  if (check) {
-    const status = p.status as number;
-    if (status === 0) {
-      return p;
-    } else {
-      throw new Error(
-        p.stderr +
-        "Command " +
-        JSON.stringify(args) +
-        " returned non-zero exit status " +
-        JSON.stringify(status),
-      );
-    }
-  } else {
-    return p;
-  }
 }
 
 function keysToTable(keys: any[], value: any = true) {
   const table: { [key: string]: any } = {}; //in js, object can only have string keys
-  keys.forEach(function(key) {
+  keys.forEach(function (key) {
     table[key] = value;
   });
   return table;
@@ -118,7 +122,7 @@ function splitExt(path: string): [string, string] {
   }
 }
 
-function getMimetype(file: string): [string, string] {
+async function getMimetype(file: string): Promise<[string, string]> {
   const extension = splitExt(file)[1];
 
   const fileArgs = ["file", "-Lb", "--mime-type", file];
@@ -128,11 +132,11 @@ function getMimetype(file: string): [string, string] {
       ? fileArgs
       : xdgArgs;
 
-  const str: string = subprocess(args, true).stdout.trimEnd();
+  const str = (await subprocessAsync(args)).stdout.trimEnd();
   const mimeType = str.split("/");
   if (mimeType.length !== 2) {
     if (args === xdgArgs) {
-      const newStr = subprocess(fileArgs, true).stdout.trimEnd() as string;
+      const newStr = (await subprocessAsync(fileArgs)).stdout.trimEnd();
       const newType = newStr.split("/");
       if (newType.length !== 2) {
         throw new Error(JSON.stringify(fileArgs) + " returns: " + newStr);
@@ -147,15 +151,24 @@ function getMimetype(file: string): [string, string] {
   }
 }
 
-function getFiles(dir: string): string[] {
+//generator implementation don't work for mpv environement
+const zip = (...rows: any) =>
+  [...rows[0]].map((_, c) => rows.map((row: any) => row[c]));
+
+async function getFiles(dir: string): Promise<string[]> {
   const allowedTypes = ["video", "audio"];
   const allowedTypesTable = keysToTable(allowedTypes);
   const files = utils.readdir(dir, "files") as string[];
+  const tasks = files.map(getMimetype);
+  const mimeTypes = await Promise.all(tasks);
   return natsort(
-    files.filter(function(file: string) {
-      const mimeType = getMimetype(file);
-      return mimeType[0] in allowedTypesTable;
-    }),
+    zip(files, mimeTypes)
+      .filter(function (fileMime) {
+        return fileMime[1][0] in allowedTypesTable;
+      })
+      .map(function (fileMime) {
+        return fileMime[0];
+      }) as string[],
   );
 }
 
@@ -178,12 +191,12 @@ function fdCurrentEntryPos(files: string[], file: string) {
   }
 }
 
-function main() {
+async function main() {
   const path = mp.get_property("path", "");
   const [dir, file] = utils.split_path(path) as [string, string];
   msg.trace("dir: " + dir + ", file: " + file);
 
-  const files = getFiles(dir);
+  const files = await getFiles(dir);
   if (files.length === 0) {
     msg.verbose("no other files or directories in directory");
     return;
@@ -192,7 +205,7 @@ function main() {
     if (current === null) {
       return;
     } else {
-      files.remove(current)[1].forEach(function(file) {
+      files.remove(current)[1].forEach(function (file) {
         mp.commandv("loadfile", file, "append");
       });
       mp.commandv("playlist-move", 0, current + 1);
@@ -200,7 +213,7 @@ function main() {
   }
 }
 
-mp.register_event("start-file", function() {
+mp.register_event("start-file", function () {
   const pl_count = mp.get_property_number("playlist-count", 1) as number;
   if (checkPlaylist(pl_count)) {
     main();
