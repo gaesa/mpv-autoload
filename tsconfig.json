@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "rootDirs": ["src"],
     "lib": ["es6"],
     "declaration": true,
     "outDir": "./dist",
@@ -8,5 +9,6 @@
     "noEmitOnError": true,
     "esModuleInterop": true
   },
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "result"]
 }
