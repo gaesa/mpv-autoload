@@ -3,11 +3,12 @@
     "target": "es5",
     "rootDirs": ["src"],
     "lib": ["es6"],
-    "declaration": true,
+    // "declaration": true,
     "outDir": "./dist",
     "strict": true,
     "noEmitOnError": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowJs": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "result"]

@@ -1,0 +1,3 @@
+[submodule "src/nopromise"]
+	path = src/nopromise
+	url = https://github.com/avih/nopromise
