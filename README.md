@@ -18,21 +18,10 @@ Ensure `file` and `xdg-mime` are accessible in your system's `PATH`.
 
 ### Building from source
 
-#### Using Nix (Recommended)
-
 ```shell
-git clone https://github.com/gaesa/mpv-autoload
+git clone --recursive https://github.com/gaesa/mpv-autoload
 cd mpv-autoload
-nix build && mkdir dist && chmod -R u+rw dist && cp -r result/. dist && chmod -R u+rw dist
-cp dist/autoload.js ~/.config/mpv/scripts
-```
-
-#### Manually using TypeScript
-
-```shell
-git clone https://github.com/gaesa/mpv-autoload
-cd mpv-autoload
-tsc
+npm ci && npm run build
 cp dist/autoload.js ~/.config/mpv/scripts
 ```
 
