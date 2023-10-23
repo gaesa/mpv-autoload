@@ -24,7 +24,7 @@ function sorted(
     return x;
   },
 ) {
-  return list.slice().sort(function (a, b) {
+  return list.slice().sort((a, b) => {
     const [keyA, keyB] = [key(a), key(b)];
     if (Array.isArray(keyA) && Array.isArray(keyB)) {
       for (let i = 0; i < keyA.length && i < keyB.length; i++) {
@@ -65,7 +65,7 @@ function natsort(strings: string[]): string[] {
     if (splitList.length > 0 && splitList[splitList.length - 1] === "") {
       splitList.pop();
     }
-    return splitList.map(function (text: string) {
+    return splitList.map((text: string) => {
       return isDigit(text) ? parseInt(text, 10) : text;
     });
   }
@@ -103,7 +103,7 @@ function subprocessAsync(args: string[]): Promise<ProcessOutput> {
 
 function keysToTable(keys: any[], value: any = true) {
   const table: { [key: string]: any } = {}; //in js, object can only have string keys
-  keys.forEach(function (key) {
+  keys.forEach((key) => {
     table[key] = value;
   });
   return table;
@@ -163,10 +163,10 @@ async function getFiles(dir: string): Promise<string[]> {
   const mimeTypes = await Promise.all(tasks);
   return natsort(
     zip(files, mimeTypes)
-      .filter(function (fileMime) {
+      .filter((fileMime) => {
         return fileMime[1][0] in allowedTypesTable;
       })
-      .map(function (fileMime) {
+      .map((fileMime) => {
         return fileMime[0];
       }) as string[],
   );
@@ -206,13 +206,13 @@ async function main() {
       return;
     } else {
       begin(
-        function () {
+        () => {
           return files.splice(current, 1);
         },
-        function () {
+        () => {
           return files;
         },
-      ).forEach(function (file: string) {
+      ).forEach((file: string) => {
         mp.commandv("loadfile", file, "append");
       });
       mp.commandv("playlist-move", 0, current + 1);
@@ -220,7 +220,7 @@ async function main() {
   }
 }
 
-mp.register_event("start-file", function () {
+mp.register_event("start-file", () => {
   const pl_count = mp.get_property_number("playlist-count", 1) as number;
   if (checkPlaylist(pl_count)) {
     main();
