@@ -106,7 +106,7 @@ function keysToTable(keys: any[], value: any = true) {
 function splitExt(path: string): [string, string] {
   const [dir, file] = utils.split_path(path) as [string, string];
   const lastDotIndex = file.lastIndexOf(".");
-  if (lastDotIndex === 0 || lastDotIndex == -1) {
+  if (lastDotIndex === 0 || lastDotIndex === -1) {
     return [path, ""];
   } else {
     return [
