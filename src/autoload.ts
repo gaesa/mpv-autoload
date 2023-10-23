@@ -10,13 +10,13 @@ if (String.prototype.trimEnd === undefined) {
   };
 }
 
-interface Array<T> {
-  remove(index: number): [T, Array<T>];
+function begin(...args: Array<() => any>): any {
+  let value: any = void 0;
+  args.forEach((arg) => {
+    value = arg();
+  });
+  return value;
 }
-Array.prototype.remove = function(index: number): [any, any[]] {
-  const copy = this.slice();
-  return [copy.splice(index, 1)[0], copy];
-};
 
 function sorted(
   list: any[],
@@ -192,7 +192,14 @@ function main() {
     if (current === null) {
       return;
     } else {
-      files.remove(current)[1].forEach(function(file) {
+      begin(
+        function () {
+          return files.splice(current, 1);
+        },
+        function () {
+          return files;
+        },
+      ).forEach(function (file: string) {
         mp.commandv("loadfile", file, "append");
       });
       mp.commandv("playlist-move", 0, current + 1);
