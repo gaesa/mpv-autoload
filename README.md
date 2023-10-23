@@ -18,10 +18,21 @@ Ensure `file` and `xdg-mime` are accessible in your system's `PATH`.
 
 ### Building from source
 
+#### Using Nix (Recommended)
+
 ```shell
-git clone --recursive https://github.com/gaesa/mpv-autoload
+git clone https://github.com/gaesa/mpv-autoload
 cd mpv-autoload
-npm ci && npm run build
+nix build && mkdir dist && chmod -R u+rw dist && cp -r result/. dist && chmod -R u+rw dist
+cp dist/autoload.js ~/.config/mpv/scripts
+```
+
+#### Manually using TypeScript
+
+```shell
+git clone https://github.com/gaesa/mpv-autoload
+cd mpv-autoload
+tsc
 cp dist/autoload.js ~/.config/mpv/scripts
 ```
 
@@ -40,12 +51,12 @@ Just move `autoload.js` to your mpv `scripts` folder and it will work out of the
 
 With these improvements, `autoload.ts` provides a cleaner, more efficient, and ready to use approach to automatically loading video and audio files into the mpv player’s playlist.
 
-## Known Limitations
+## Limitation
 
-The `autoload.ts` script leverages the `getMimetype` function to filter all video and audio files within a directory. It’s important to note that this operation is not recursive. This is because the `mp.utils.readdir` function does not recursively return files.
+The `autoload.ts` script uses the `getMimetype` function to filter all video and audio files within a directory. Note that this operation is not recursive, as the `mp.utils.readdir` function does not return files recursively.
 
-The `getMimetype` function utilizes the `mp.command_native_async` function to invoke external commands and accurately determine the mime type of each file. This approach is significantly faster compared to using `mp.command_native.` However, users may perceive a delay of approximately 1 second when there are around 200 files, prior to the commencement of media playback by mpv. In reality, the delay measured with `mp.get_time` is less than 0.1 second.
+The `getMimetype` function employs the `mp.command_native` function to call an external command and obtain the precise mime type of each file. As this operation is performed individually for each file, it can take over 3 seconds to return results for a directory containing more than 200 files.
 
-At present, `mp.register_event("start-file")` serves as the initial entry point for orchestrating the timing of the program’s execution. The reason for this delay remains ambiguous as mpv appears to wait for the script to complete within a single event. On the other hand, when `mp.register_event("file_loaded")` is used, the delay is postponed until after mpv begins media playback. This leads to a pause in playback and a warning message `Audio device underrun detected`, which could be disruptive for users.
+Although MPV provides the `mp.command_native_async` function for asynchronous operations, I have not found an effective way to wait for all commands to return results before proceeding. However, the good news is that this script will not block your MPV player, even though it currently does not utilize `mp.command_native_async.`
 
-Any suggestions or contributions on how to mitigate this issue are welcome.
+Any suggestions or contributions on how to speed up this operation are welcome.
