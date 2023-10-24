@@ -5,7 +5,7 @@ interface String {
   trimEnd(): string;
 }
 if (String.prototype.trimEnd === undefined) {
-  String.prototype.trimEnd = function(): string {
+  String.prototype.trimEnd = function (): string {
     return this.replace(/\s+$/, "");
   };
 }
@@ -20,11 +20,11 @@ function begin(...args: Array<() => any>): any {
 
 function sorted(
   list: any[],
-  key: (arg: any) => any = function(x) {
+  key: (arg: any) => any = function (x) {
     return x;
   },
 ) {
-  return list.slice().sort(function(a, b) {
+  return list.slice().sort((a, b) => {
     const [keyA, keyB] = [key(a), key(b)];
     if (Array.isArray(keyA) && Array.isArray(keyB)) {
       for (let i = 0; i < keyA.length && i < keyB.length; i++) {
@@ -65,7 +65,7 @@ function natsort(strings: string[]): string[] {
     if (splitList.length > 0 && splitList[splitList.length - 1] === "") {
       splitList.pop();
     }
-    return splitList.map(function(text: string) {
+    return splitList.map((text: string) => {
       return isDigit(text) ? parseInt(text, 10) : text;
     });
   }
@@ -86,10 +86,10 @@ function subprocess(args: string[], check: boolean = false) {
     } else {
       throw new Error(
         p.stderr +
-        "Command " +
-        JSON.stringify(args) +
-        " returned non-zero exit status " +
-        JSON.stringify(status),
+          "Command " +
+          JSON.stringify(args) +
+          " returned non-zero exit status " +
+          JSON.stringify(status),
       );
     }
   } else {
@@ -99,7 +99,7 @@ function subprocess(args: string[], check: boolean = false) {
 
 function keysToTable(keys: any[], value: any = true) {
   const table: { [key: string]: any } = {}; //in js, object can only have string keys
-  keys.forEach(function(key) {
+  keys.forEach((key) => {
     table[key] = value;
   });
   return table;
@@ -152,7 +152,7 @@ function getFiles(dir: string): string[] {
   const allowedTypesTable = keysToTable(allowedTypes);
   const files = utils.readdir(dir, "files") as string[];
   return natsort(
-    files.filter(function(file: string) {
+    files.filter((file: string) => {
       const mimeType = getMimetype(file);
       return mimeType[0] in allowedTypesTable;
     }),
@@ -193,13 +193,13 @@ function main() {
       return;
     } else {
       begin(
-        function () {
+        () => {
           return files.splice(current, 1);
         },
-        function () {
+        () => {
           return files;
         },
-      ).forEach(function (file: string) {
+      ).forEach((file: string) => {
         mp.commandv("loadfile", file, "append");
       });
       mp.commandv("playlist-move", 0, current + 1);
@@ -207,7 +207,7 @@ function main() {
   }
 }
 
-mp.register_event("start-file", function() {
+mp.register_event("start-file", () => {
   const pl_count = mp.get_property_number("playlist-count", 1) as number;
   if (checkPlaylist(pl_count)) {
     main();
