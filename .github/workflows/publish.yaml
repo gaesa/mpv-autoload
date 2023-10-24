@@ -4,12 +4,14 @@ on:
     branches:
       - main
     paths:
-      - autoload.ts
+      - src/autoload.ts
+      - .github/workflows/publish.yaml
   pull_request:
     branches:
       - main
     paths:
-      - autoload.ts
+      - src/autoload.ts
+      - .github/workflows/publish.yaml
   workflow_dispatch:
 
 jobs:
@@ -18,16 +20,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Nix
-        uses: cachix/install-nix-action@v22
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          submodules: "recursive"
 
-      - name: Build and Check
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Build
         run: |
-          nix build
-          nix flake check
+          npm ci
+          npm run build
 
       - name: Generate release tag
         id: tag
@@ -41,7 +45,7 @@ jobs:
         with:
           tag_name: ${{ env.release_tag }}
           files: |
-            result/autoload.js
+            dist/autoload.js
 
       - name: Cleanup Old Releases
         uses: dev-drprasad/delete-older-releases@v0.2.1

@@ -8,5 +8,5 @@
     "noEmitOnError": true,
     "esModuleInterop": true
   },
-  "exclude": ["node_modules", "dist", "result"]
+  "exclude": ["node_modules", "dist"]
 }

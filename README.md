@@ -16,23 +16,12 @@ Ensure `file` and `xdg-mime` are accessible in your system's `PATH`.
 1. Download the **latest** version of `autoload.js` from the _Releases_.
 2. Move the downloaded `autoload.js` to your mpv `scripts` folder.
 
-### Building from source
-
-#### Using Nix (Recommended)
+## Building from source
 
 ```shell
 git clone https://github.com/gaesa/mpv-autoload
 cd mpv-autoload
-nix build && mkdir dist && chmod -R u+rw dist && cp -r result/. dist && chmod -R u+rw dist
-cp dist/autoload.js ~/.config/mpv/scripts
-```
-
-#### Manually using TypeScript
-
-```shell
-git clone https://github.com/gaesa/mpv-autoload
-cd mpv-autoload
-tsc
+npm ci && npm run build
 cp dist/autoload.js ~/.config/mpv/scripts
 ```
 
