@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "core-js": "^3.33.1",
     "ts-loader": "^9.5.0",
     "webpack-cli": "^5.1.4",
     "webpack-core": "^0.6.9"
@@ -10,6 +11,7 @@
     "build": "npm run build:ts && npm run build:webpack"
   },
   "devDependencies": {
+    "@types/core-js": "^2.5.7",
     "@types/node": "^20.8.8"
   }
 }

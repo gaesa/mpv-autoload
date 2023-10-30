@@ -1,14 +1,8 @@
+import "core-js/es/string/starts-with";
+import "core-js/es/string/trim-end";
+
 const utils = mp.utils;
 const msg = mp.msg;
-
-interface String {
-  trimEnd(): string;
-}
-if (String.prototype.trimEnd === undefined) {
-  String.prototype.trimEnd = function (): string {
-    return this.replace(/\s+$/, "");
-  };
-}
 
 function begin(...args: Array<() => any>): any {
   let value: any = void 0;
