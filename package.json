@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@types/node": "^20.8.8",
     "ts-loader": "^9.5.0",
     "webpack-cli": "^5.1.4",
     "webpack-core": "^0.6.9"
@@ -9,5 +8,8 @@
     "build:ts": "tsc",
     "build:webpack": "webpack",
     "build": "npm run build:ts && npm run build:webpack"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.8"
   }
 }
