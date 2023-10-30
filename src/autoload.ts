@@ -121,8 +121,13 @@ function splitExt(path: string): [string, string] {
 function getMimetype(file: string): [string, string] {
   const extension = splitExt(file)[1];
 
-  const fileArgs = ["file", "-Lb", "--mime-type", file];
-  const xdgArgs = ["xdg-mime", "query", "filetype", file];
+  const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
+  const xdgArgs = [
+    "xdg-mime",
+    "query",
+    "filetype",
+    file.startsWith("-") ? "./" + file : file,
+  ];
   const args =
     extension in keysToTable([".ts", ".bak", ".txt", ".TXT"])
       ? fileArgs
