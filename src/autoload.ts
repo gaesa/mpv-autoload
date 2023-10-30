@@ -1,5 +1,6 @@
 import "core-js/es/string/starts-with";
 import "core-js/es/string/trim-end";
+import "core-js/es/set";
 
 const utils = mp.utils;
 const msg = mp.msg;
@@ -91,14 +92,6 @@ function subprocess(args: string[], check: boolean = false) {
   }
 }
 
-function keysToTable(keys: any[], value: any = true) {
-  const table: { [key: string]: any } = {}; //in js, object can only have string keys
-  keys.forEach((key) => {
-    table[key] = value;
-  });
-  return table;
-}
-
 function splitExt(path: string): [string, string] {
   const [dir, file] = utils.split_path(path) as [string, string];
   const lastDotIndex = file.lastIndexOf(".");
@@ -122,10 +115,9 @@ function getMimetype(file: string): [string, string] {
     "filetype",
     file.startsWith("-") ? "./" + file : file,
   ];
-  const args =
-    extension in keysToTable([".ts", ".bak", ".txt", ".TXT"])
-      ? fileArgs
-      : xdgArgs;
+  const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(extension)
+    ? fileArgs
+    : xdgArgs;
 
   const str: string = subprocess(args, true).stdout.trimEnd();
   const mimeType = str.split("/");
@@ -147,13 +139,12 @@ function getMimetype(file: string): [string, string] {
 }
 
 function getFiles(dir: string): string[] {
-  const allowedTypes = ["video", "audio"];
-  const allowedTypesTable = keysToTable(allowedTypes);
+  const allowedTypes = new Set(["video", "audio"]);
   const files = utils.readdir(dir, "files") as string[];
   return natsort(
     files.filter((file: string) => {
       const mimeType = getMimetype(file);
-      return mimeType[0] in allowedTypesTable;
+      return allowedTypes.has(mimeType[0]);
     }),
   );
 }
