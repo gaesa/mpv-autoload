@@ -105,8 +105,11 @@ function splitExt(path: string): [string, string] {
   }
 }
 
-function getMimetype(file: string): [string, string] {
-  const extension = splitExt(file)[1];
+function getMimetype(
+  file: string,
+  extension: string | null = null,
+): [string, string] {
+  const ext = extension === null ? splitExt(file)[1] : extension;
 
   const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
   const xdgArgs = [
@@ -115,7 +118,7 @@ function getMimetype(file: string): [string, string] {
     "filetype",
     file.startsWith("-") ? "./" + file : file,
   ];
-  const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(extension)
+  const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(ext)
     ? fileArgs
     : xdgArgs;
 
@@ -138,13 +141,31 @@ function getMimetype(file: string): [string, string] {
   }
 }
 
+function mergeSets(...sets: Set<any>[]): Set<any> {
+  const mergedSet = new Set<any>();
+  sets.forEach((set) => {
+    set.forEach((elem) => {
+      mergedSet.add(elem);
+    });
+  });
+  return mergedSet;
+}
+
 function getFiles(dir: string): string[] {
   const allowedTypes = new Set(["video", "audio"]);
+  const commonVideo = new Set([".mp4", ".mkv", ".webm"]);
+  const commonAudio = new Set([".mp3", ".flac"]);
+  const commonMedia = mergeSets(commonVideo, commonAudio) as Set<string>;
+
   const files = utils.readdir(dir, "files") as string[];
   return natsort(
     files.filter((file: string) => {
-      const mimeType = getMimetype(file);
-      return allowedTypes.has(mimeType[0]);
+      const ext = splitExt(file)[1];
+      if (commonMedia.has(ext)) {
+        return true;
+      } else {
+        return allowedTypes.has(getMimetype(file, ext)[0]);
+      }
     }),
   );
 }
