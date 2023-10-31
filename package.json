@@ -6,9 +6,8 @@
     "webpack-core": "^0.6.9"
   },
   "scripts": {
-    "build:ts": "tsc",
     "build:webpack": "webpack",
-    "build": "npm run build:ts && npm run build:webpack"
+    "build": "npm run build:webpack"
   },
   "devDependencies": {
     "@types/core-js": "^2.5.7",
