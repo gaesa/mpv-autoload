@@ -1,4 +1,5 @@
 import "core-js/es/string/starts-with";
+import "core-js/es/string/ends-with";
 import "core-js/es/string/trim-end";
 import "core-js/es/set";
 
@@ -151,15 +152,20 @@ function mergeSets(...sets: Set<any>[]): Set<any> {
   return mergedSet;
 }
 
-function getFiles(dir: string): string[] {
+function getFiles(dir: string, relativeFlag: boolean = false): string[] {
   const allowedTypes = new Set(["video", "audio"]);
   const commonVideo = new Set([".mp4", ".mkv", ".webm"]);
   const commonAudio = new Set([".mp3", ".flac"]);
   const commonMedia = mergeSets(commonVideo, commonAudio) as Set<string>;
 
   const files = utils.readdir(dir, "files") as string[];
+  const toBeFiltered = relativeFlag
+    ? files.map((file: string) => {
+        return utils.join_path(dir, file) as string;
+      })
+    : files;
   return natsort(
-    files.filter((file: string) => {
+    toBeFiltered.filter((file: string) => {
       const ext = splitExt(file)[1];
       if (commonMedia.has(ext)) {
         return true;
@@ -189,15 +195,22 @@ function fdCurrentEntryPos(files: string[], file: string) {
   }
 }
 
+function stripTrailingSlash(path: string) {
+  return path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
+}
+
 function main() {
   const path: string | null = mp.get_property_native("path", null);
   if (path === null) {
     return;
   } else {
-    const [dir, file] = utils.split_path(path) as [string, string];
+    let [dir, file] = utils.split_path(path) as [string, string];
+    dir = stripTrailingSlash(dir);
+    const relativeFlag = utils.getcwd() !== dir;
+    file = relativeFlag ? utils.join_path(dir, file) : file;
     msg.trace("dir: " + dir + ", file: " + file);
 
-    const files = getFiles(dir);
+    const files = getFiles(dir, relativeFlag);
     if (files.length === 0) {
       msg.verbose("no other files or directories in directory");
       return;
