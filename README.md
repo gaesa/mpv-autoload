@@ -3,15 +3,14 @@
 ## Features
 
 - **Automatic Playlist Generation**: The script automatically identifies and loads video and audio files from the same directory into your playlist.
-- **Mimetype Checks**: Instead of relying on file extensions, the script uses mimetype checks for more accurate file type identification.
+- **Mixed Method for File Type Identification**: The script now uses a combination of file extension checks and mimetype checks to identify file types. This approach is more reliable and still fast, as it uses extension checks for common media files and mimetype checks for the rest.
+- **Plug-and-Play**: No configuration needed, works immediately upon installation.
 
 ## Non-Features
 
 1. **Include Files from Subdirectories**: This feature is not implemented because it could make the resulting playlist unexpected and inflexible. I want to ensure that users have full control over the files that are included in the playlist.
 
-2. **Use Extension Instead of MIME Type to Filter Files**: This program uses MIME types instead of file extensions to filter files. This is because file extensions are not always accurate. For instance, a `.ts` file could be a video file or a TypeScript file. However, I am considering making this an option in the future to provide more flexibility.
-
-3. **Limit Number of Files in Playlist**: This feature is not implemented because it could limit the flexibility of the program. I believe that users should have the freedom to include as many files in the playlist as they want.
+2. **Limit Number of Files in Playlist**: This feature is not implemented because it could limit the flexibility of the program. I believe that users should have the freedom to include as many files in the playlist as they want.
 
 ## Requirements
 
@@ -52,9 +51,9 @@ With these improvements, `autoload.ts` provides a cleaner, more efficient, and r
 
 The `autoload.ts` script leverages the `getMimetype` function to filter all video and audio files within a directory. It’s important to note that this operation is not recursive. This is because the `mp.utils.readdir` function does not recursively return files.
 
-The `getMimetype` function employs the `mp.command_native` function to call an external command and obtain the precise mime type of each file. As this operation is performed individually for each file, it can take over 3 seconds to return results for a directory containing more than 200 files.
+The `getMimetype` function employs the `mp.command_native` function to call an external command and obtain the precise mime type of each file. As this operation is performed individually for each file, it can take over 3 seconds to return results for a directory containing more than 200 files. (However, by using the mixed method, this task is finished within 0.4 seconds)
 
-Although MPV provides the `mp.command_native_async` function for asynchronous commands, when using this approach users may perceive a delay of approximately 1 second when there are around 200 files, prior to the commencement of media playback by mpv. In reality, the delay measured with `mp.get_time` is less than 0.1 second. The good news is that current implementation of this program will not block your MPV player, even though it currently does not utilize `mp.command_native_async`.
+Although MPV provides the `mp.command_native_async` function for asynchronous commands, when using this single approach users may perceive a delay of approximately 1 second when there are around 200 files, prior to the commencement of media playback by mpv. In reality, the delay measured with `mp.get_time` is less than 0.1 second. The good news is that current implementation of this program will not block your MPV player, even though it currently does not utilize `mp.command_native_async`.
 
 ### More Info On Previous Experiments Using `mp.command_native_async`:
 
