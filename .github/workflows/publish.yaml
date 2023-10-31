@@ -6,12 +6,16 @@ on:
     paths:
       - src/autoload.ts
       - .github/workflows/publish.yaml
+      - package.json
+      - package-lock.json
   pull_request:
     branches:
       - main
     paths:
       - src/autoload.ts
       - .github/workflows/publish.yaml
+      - package.json
+      - package-lock.json
   workflow_dispatch:
 
 jobs:
