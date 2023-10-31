@@ -7,10 +7,12 @@
   },
   "scripts": {
     "build:webpack": "webpack",
-    "build": "npm run build:webpack"
+    "build": "npm run build:webpack",
+    "analyze": "if [[ ! -f ./dist/stats.json ]]; then npm run build; fi && webpack-bundle-analyzer ./dist/stats.json"
   },
   "devDependencies": {
     "@types/core-js": "^2.5.7",
-    "@types/node": "^20.8.8"
+    "@types/node": "^20.8.8",
+    "webpack-bundle-analyzer": "^4.9.1"
   }
 }
