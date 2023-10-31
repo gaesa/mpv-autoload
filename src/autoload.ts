@@ -152,14 +152,14 @@ function mergeSets(...sets: Set<any>[]): Set<any> {
   return mergedSet;
 }
 
-function getFiles(dir: string, relativeFlag: boolean = false): string[] {
+function getFiles(dir: string, joinFlag: boolean = false): string[] {
   const allowedTypes = new Set(["video", "audio"]);
   const commonVideo = new Set([".mp4", ".mkv", ".webm"]);
   const commonAudio = new Set([".mp3", ".flac"]);
   const commonMedia = mergeSets(commonVideo, commonAudio) as Set<string>;
 
   const files = utils.readdir(dir, "files") as string[];
-  const toBeFiltered = relativeFlag
+  const toBeFiltered = joinFlag
     ? files.map((file: string) => {
         return utils.join_path(dir, file) as string;
       })
@@ -206,11 +206,11 @@ function main() {
   } else {
     let [dir, file] = utils.split_path(path) as [string, string];
     dir = stripTrailingSlash(dir);
-    const relativeFlag = utils.getcwd() !== dir;
-    file = relativeFlag ? utils.join_path(dir, file) : file;
+    const joinFlag = utils.getcwd() !== dir;
+    file = joinFlag ? utils.join_path(dir, file) : file;
     msg.trace("dir: " + dir + ", file: " + file);
 
-    const files = getFiles(dir, relativeFlag);
+    const files = getFiles(dir, joinFlag);
     if (files.length === 0) {
       msg.verbose("no other files or directories in directory");
       return;
