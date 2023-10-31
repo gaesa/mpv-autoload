@@ -190,36 +190,40 @@ function fdCurrentEntryPos(files: string[], file: string) {
 }
 
 function main() {
-  const path = mp.get_property("path", "");
-  const [dir, file] = utils.split_path(path) as [string, string];
-  msg.trace("dir: " + dir + ", file: " + file);
-
-  const files = getFiles(dir);
-  if (files.length === 0) {
-    msg.verbose("no other files or directories in directory");
+  const path: string | null = mp.get_property_native("path", null);
+  if (path === null) {
     return;
   } else {
-    const current = fdCurrentEntryPos(files, file);
-    if (current === null) {
+    const [dir, file] = utils.split_path(path) as [string, string];
+    msg.trace("dir: " + dir + ", file: " + file);
+
+    const files = getFiles(dir);
+    if (files.length === 0) {
+      msg.verbose("no other files or directories in directory");
       return;
     } else {
-      begin(
-        () => {
-          return files.splice(current, 1);
-        },
-        () => {
-          return files;
-        },
-      ).forEach((file: string) => {
-        mp.commandv("loadfile", file, "append");
-      });
-      mp.commandv("playlist-move", 0, current + 1);
+      const current = fdCurrentEntryPos(files, file);
+      if (current === null) {
+        return;
+      } else {
+        begin(
+          () => {
+            return files.splice(current, 1);
+          },
+          () => {
+            return files;
+          },
+        ).forEach((file: string) => {
+          mp.commandv("loadfile", file, "append");
+        });
+        mp.commandv("playlist-move", 0, current + 1);
+      }
     }
   }
 }
 
 mp.register_event("start-file", () => {
-  const pl_count = mp.get_property_number("playlist-count", 1) as number;
+  const pl_count = mp.get_property_native("playlist-count", 1) as number;
   if (checkPlaylist(pl_count)) {
     main();
   } else {
