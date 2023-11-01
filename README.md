@@ -14,7 +14,12 @@
 
 ## Requirements
 
-Ensure `file` and `xdg-mime` are accessible in your system's `PATH`.
+Ensure `mpv` can access the required dependencies:
+
+- **Linux:** The `file` and `xdg-mime` executables should be located in a directory listed in your `PATH`.
+- **Other Operating Systems:** The `file` executable should be located in a directory listed in your `PATH`.
+
+For Windows users, you can install `file` using Chocolatey with the command: `choco install file`. Alternatively, you can manually download it from the _Releases_ section of https://github.com/julian-r/file-windows, then update `Path` as necessary.
 
 ## Installation
 
