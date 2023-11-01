@@ -170,7 +170,7 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
 
 function checkPlaylist(pl_count: number) {
   if (pl_count > 1) {
-    msg.verbose("stopping: manually made playlist");
+    msg.verbose("Stopping: manually made playlist");
     return false;
   } else {
     return true;
@@ -207,21 +207,21 @@ function addFilesToPlaylist(files: string[], current: number) {
 function main() {
   const path: string | null = mp.get_property_native("path", null);
   if (path === null) {
-    return;
+    msg.warn("Fail to get the path of the currently played file");
   } else {
     let [dir, file] = splitPath(path);
     const joinFlag = utils.getcwd() !== dir;
-    msg.trace("dir: " + dir + ", file: " + file);
     file = joinFlag ? path : file;
 
     const files = getFiles(dir, joinFlag);
     if (files.length === 0) {
-      msg.verbose("no other files or directories in directory");
-      return;
+      msg.verbose("No other video or audio files in the directory");
     } else {
       const current = fdCurrentEntryPos(files, file);
       if (current === null) {
-        return;
+        msg.warn(
+          "Can't find the position of the currently played file in media files",
+        );
       } else {
         addFilesToPlaylist(files, current);
       }
