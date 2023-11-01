@@ -6,14 +6,6 @@ import "core-js/es/set";
 const utils = mp.utils;
 const msg = mp.msg;
 
-function begin(...args: Array<() => any>): any {
-  let value: any = void 0;
-  args.forEach((arg) => {
-    value = arg();
-  });
-  return value;
-}
-
 function sorted(
   list: any[],
   key: (arg: any) => any = function (x) {
@@ -199,16 +191,28 @@ function stripTrailingSlash(path: string) {
   return path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
 }
 
+function splitPath(path: string): [string, string] {
+  const [dir, file] = utils.split_path(path) as [string, string];
+  return [stripTrailingSlash(dir), file];
+}
+
+function addFilesToPlaylist(files: string[], current: number) {
+  files.splice(current, 1);
+  files.forEach((file: string) => {
+    mp.commandv("loadfile", file, "append");
+  });
+  mp.commandv("playlist-move", 0, current + 1);
+}
+
 function main() {
   const path: string | null = mp.get_property_native("path", null);
   if (path === null) {
     return;
   } else {
-    let [dir, file] = utils.split_path(path) as [string, string];
-    dir = stripTrailingSlash(dir);
+    let [dir, file] = splitPath(path);
     const joinFlag = utils.getcwd() !== dir;
-    file = joinFlag ? utils.join_path(dir, file) : file;
     msg.trace("dir: " + dir + ", file: " + file);
+    file = joinFlag ? path : file;
 
     const files = getFiles(dir, joinFlag);
     if (files.length === 0) {
@@ -219,17 +223,7 @@ function main() {
       if (current === null) {
         return;
       } else {
-        begin(
-          () => {
-            return files.splice(current, 1);
-          },
-          () => {
-            return files;
-          },
-        ).forEach((file: string) => {
-          mp.commandv("loadfile", file, "append");
-        });
-        mp.commandv("playlist-move", 0, current + 1);
+        addFilesToPlaylist(files, current);
       }
     }
   }
