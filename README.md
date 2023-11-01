@@ -56,7 +56,7 @@ With these improvements, `autoload.ts` provides a cleaner, more efficient, and r
 
 The `autoload.ts` script leverages the `getMimetype` function to filter all video and audio files within a directory. It’s important to note that this operation is not recursive. This is because the `mp.utils.readdir` function does not recursively return files.
 
-The `getMimetype` function employs the `mp.command_native` function to call an external command and obtain the precise mime type of each file. As this operation is performed individually for each file, it can take over 3 seconds to return results for a directory containing more than 200 files. (However, by using the mixed method, this task is finished within 0.4 seconds)
+The `getMimetype` function employs the `mp.command_native` function to call an external command and obtain the precise mime type of each file. As this operation is performed individually for each file, it can take over 3 seconds to return results for a directory containing more than 200 files. (However, by using the mixed method, this task is finished within 0.4 seconds if most of files are common media files)
 
 Although MPV provides the `mp.command_native_async` function for asynchronous commands, when using this single approach users may perceive a delay of approximately 1 second when there are around 200 files, prior to the commencement of media playback by mpv. In reality, the delay measured with `mp.get_time` is less than 0.1 second. The good news is that current implementation of this program will not block your MPV player, even though it currently does not utilize `mp.command_native_async`.
 
