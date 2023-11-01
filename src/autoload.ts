@@ -45,18 +45,18 @@ function natsort(strings: string[]): string[] {
   function isDigit(n: string) {
     return /^\d+$/.test(n);
   }
+
   function key(s: string) {
     const splitList = s.split(/(\d+)/);
-    if (splitList[0] === "") {
-      splitList.shift();
-    }
-    if (splitList.length > 0 && splitList[splitList.length - 1] === "") {
-      splitList.pop();
-    }
+    splitList[0] === "" ? splitList.shift() : void 0;
+    splitList.length > 0 && splitList[splitList.length - 1] === ""
+      ? splitList.pop()
+      : void 0;
     return splitList.map((text: string) => {
       return isDigit(text) ? parseInt(text, 10) : text;
     });
   }
+
   return sorted(strings, key);
 }
 
