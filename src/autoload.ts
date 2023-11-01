@@ -98,41 +98,92 @@ function splitExt(path: string): [string, string] {
   }
 }
 
-function getMimetype(
-  file: string,
-  extension: string | null = null,
-): [string, string] {
-  const ext = extension === null ? splitExt(file)[1] : extension;
+function getOS() {
+  function isdir(file: string): boolean {
+    const info = utils.file_info(file);
+    if (info === void 0) {
+      return false;
+    } else {
+      return info.is_dir;
+    }
+  }
 
-  const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
-  const xdgArgs = [
-    "xdg-mime",
-    "query",
-    "filetype",
-    file.startsWith("-") ? "./" + file : file,
-  ];
-  const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(ext)
-    ? fileArgs
-    : xdgArgs;
+  function detectNonWindows() {
+    const unameOutput = subprocess(["uname", "-s"], true).trimEnd() as string;
+    if (unameOutput === "Darwin") {
+      return "darwin";
+    } else if (unameOutput === "Linux") {
+      return "linux";
+    } else {
+      return unameOutput;
+    }
+  }
 
-  const str: string = subprocess(args, true).stdout.trimEnd();
-  const mimeType = str.split("/");
-  if (mimeType.length !== 2) {
-    if (args === xdgArgs) {
-      const newStr = subprocess(fileArgs, true).stdout.trimEnd() as string;
-      const newType = newStr.split("/");
-      if (newType.length !== 2) {
-        throw new Error(JSON.stringify(fileArgs) + " returns: " + newStr);
+  const platform = mp.get_property_native("platform") as string;
+  if (platform === void 0) {
+    if (utils.getenv("OS") === "Windows_NT") {
+      const HOMEDRIVE = utils.getenv("HOMEDRIVE") as string | undefined;
+      if (HOMEDRIVE !== void 0 && isdir(HOMEDRIVE)) {
+        return "windows";
       } else {
-        return newType as [string, string];
+        return detectNonWindows();
       }
     } else {
-      throw new Error(JSON.stringify(fileArgs) + " returns: " + str);
+      return detectNonWindows();
     }
   } else {
-    return mimeType as [string, string];
+    return platform;
   }
 }
+
+const getMimetype =
+  getOS() === "linux"
+    ? (file: string, extension: string | void = void 0) => {
+        const ext = extension === void 0 ? splitExt(file)[1] : extension;
+        const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
+        const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(ext)
+          ? fileArgs
+          : [
+              "xdg-mime",
+              "query",
+              "filetype",
+              file.startsWith("-") ? "./" + file : file,
+            ];
+
+        const str: string = subprocess(args, true).stdout.trimEnd();
+        const mimeType = str.split("/");
+        if (mimeType.length !== 2) {
+          if (args[0] === "xdg-mime") {
+            const newStr = subprocess(
+              fileArgs,
+              true,
+            ).stdout.trimEnd() as string;
+            const newType = newStr.split("/");
+            if (newType.length !== 2) {
+              throw new Error(JSON.stringify(fileArgs) + " returns: " + newStr);
+            } else {
+              return newType as [string, string];
+            }
+          } else {
+            throw new Error(JSON.stringify(fileArgs) + " returns: " + str);
+          }
+        } else {
+          return mimeType as [string, string];
+        }
+      }
+    : (file: string, _: string | void = void 0) => {
+        // `file` command on Windows:
+        // https://github.com/julian-r/file-windows
+        // note: `-L` option isn't supported in this version
+        const args = ["file", "-b", "--mime-type", "--", file];
+        const str: string = subprocess(args, true).stdout.trimEnd();
+        const mimeType = str.split("/");
+        if (mimeType.length !== 2) {
+          throw new Error(JSON.stringify(args) + " returns: " + str);
+        } else {
+          return mimeType as [string, string];
+        }
+      };
 
 function unionSet(...sets: Set<any>[]): Set<any> {
   const mergedSet = new Set<any>();
