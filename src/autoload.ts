@@ -250,9 +250,9 @@ function splitPath(path: string): [string, string] {
 function addFilesToPlaylist(files: string[], current: number) {
   files.splice(current, 1);
   files.forEach((file: string) => {
-    mp.commandv("loadfile", file, "append");
+    mp.command_native(["loadfile", file, "append"]);
   });
-  mp.commandv("playlist-move", 0, current + 1);
+  mp.command_native(["playlist-move", 0, current + 1]);
 }
 
 function main() {
