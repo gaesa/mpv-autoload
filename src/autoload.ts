@@ -119,7 +119,7 @@ function getOS() {
     }
   }
 
-  const platform = mp.get_property_native("platform") as string;
+  const platform = mp.get_property_native("platform") as string | undefined;
   if (platform === void 0) {
     if (utils.getenv("OS") === "Windows_NT") {
       const HOMEDRIVE = utils.getenv("HOMEDRIVE") as string | undefined;
