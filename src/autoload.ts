@@ -138,7 +138,7 @@ function getOS() {
 
 const getMimetype =
   getOS() === "linux"
-    ? (file: string, extension: string | void = void 0) => {
+    ? (file: string, extension: string | undefined = void 0) => {
         const ext = extension === void 0 ? splitExt(file)[1] : extension;
         const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
         const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(ext)
@@ -171,7 +171,7 @@ const getMimetype =
           return mimeType as [string, string];
         }
       }
-    : (file: string, _: string | void = void 0) => {
+    : (file: string, _: string | undefined = void 0) => {
         // `file` command on Windows:
         // https://github.com/julian-r/file-windows
         // note: `-L` option isn't supported in this version
@@ -231,7 +231,7 @@ function checkPlaylist(pl_count: number) {
 function fdCurrentEntryPos(files: string[], file: string) {
   const current = files.indexOf(file);
   if (current === -1) {
-    return null;
+    return void 0;
   } else {
     msg.trace("current file position in files: " + current);
     return current;
@@ -256,8 +256,8 @@ function addFilesToPlaylist(files: string[], current: number) {
 }
 
 function main() {
-  const path: string | null = mp.get_property_native("path", null);
-  if (path === null) {
+  const path: string | undefined = mp.get_property_native("path");
+  if (path === void 0) {
     msg.warn("Fail to get the path of the currently played file");
   } else {
     let [dir, file] = splitPath(path);
@@ -269,7 +269,7 @@ function main() {
       msg.verbose("No other video or audio files in the directory");
     } else {
       const current = fdCurrentEntryPos(files, file);
-      if (current === null) {
+      if (current === void 0) {
         msg.warn(
           "Can't find the position of the currently played file in media files",
         );
