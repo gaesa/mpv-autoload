@@ -134,7 +134,7 @@ function getMimetype(
   }
 }
 
-function mergeSets(...sets: Set<any>[]): Set<any> {
+function unionSet(...sets: Set<any>[]): Set<any> {
   const mergedSet = new Set<any>();
   sets.forEach((set) => {
     set.forEach((elem) => {
@@ -148,7 +148,7 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
   const allowedTypes = new Set(["video", "audio"]);
   const commonVideo = new Set([".mp4", ".mkv", ".webm"]);
   const commonAudio = new Set([".mp3", ".flac"]);
-  const commonMedia = mergeSets(commonVideo, commonAudio) as Set<string>;
+  const commonMedia = unionSet(commonVideo, commonAudio) as Set<string>;
 
   const files = utils.readdir(dir, "files") as string[];
   const toBeFiltered = joinFlag
