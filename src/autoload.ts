@@ -142,6 +142,24 @@ function getOS() {
 const getMimetype =
     getOS() === "linux"
         ? (file: string, extension: string | undefined = void 0) => {
+              function getCheckedMime(
+                  mimeType: string[],
+                  args: string[],
+                  onError?: () => [string, string],
+              ): [string, string] {
+                  if (mimeType.length !== 2) {
+                      if (onError === void 0) {
+                          throw new Error(
+                              JSON.stringify(args) + " returns: " + mimeType,
+                          );
+                      } else {
+                          return onError();
+                      }
+                  } else {
+                      return mimeType as [string, string];
+                  }
+              }
+
               const ext = extension === void 0 ? splitExt(file)[1] : extension;
               const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
               const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(ext)
@@ -154,29 +172,20 @@ const getMimetype =
                     ];
 
               const str: string = subprocess(args, true).stdout.trimEnd();
-              const mimeType = str.split("/");
-              if (mimeType.length !== 2) {
+              const mimeType = str.split("/", 2);
+              return getCheckedMime(mimeType, args, () => {
                   if (args[0] === "xdg-mime") {
-                      const newStr = subprocess(
+                      const str = subprocess(
                           fileArgs,
                           true,
                       ).stdout.trimEnd() as string;
-                      const newType = newStr.split("/");
-                      if (newType.length !== 2) {
-                          throw new Error(
-                              JSON.stringify(fileArgs) + " returns: " + newStr,
-                          );
-                      } else {
-                          return newType as [string, string];
-                      }
+                      return getCheckedMime(str.split("/", 2), fileArgs);
                   } else {
                       throw new Error(
                           JSON.stringify(fileArgs) + " returns: " + str,
                       );
                   }
-              } else {
-                  return mimeType as [string, string];
-              }
+              });
           }
         : (file: string, _: string | undefined = void 0) => {
               // `file` command on Windows:
