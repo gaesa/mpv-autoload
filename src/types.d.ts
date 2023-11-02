@@ -1,5 +1,5 @@
 declare var mp: any;
-declare var dump: (arg: any) => string;
+declare var dump: (arg: any) => void;
 
 declare module "core-js/es/string/starts-with";
 declare module "core-js/es/string/ends-with";
