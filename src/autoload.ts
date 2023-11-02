@@ -6,14 +6,9 @@ import "core-js/es/set";
 const utils = mp.utils;
 const msg = mp.msg;
 
-function sorted(
-    list: any[],
-    key: (arg: any) => any = function (x) {
-        return x;
-    },
-) {
+function sorted(list: any[], key?: (arg: any) => any) {
     return list.slice().sort((a, b) => {
-        const [keyA, keyB] = [key(a), key(b)];
+        const [keyA, keyB] = key === void 0 ? [a, b] : [key(a), key(b)];
         if (Array.isArray(keyA) && Array.isArray(keyB)) {
             for (let i = 0; i < keyA.length && i < keyB.length; i++) {
                 if (keyA[i] < keyB[i]) {
@@ -141,7 +136,7 @@ function getOS() {
 
 const getMimetype =
     getOS() === "linux"
-        ? (file: string, extension: string | undefined = void 0) => {
+        ? (file: string, extension?: string) => {
               function getCheckedMime(
                   mimeType: string[],
                   args: string[],
@@ -187,7 +182,7 @@ const getMimetype =
                   }
               });
           }
-        : (file: string, _: string | undefined = void 0) => {
+        : (file: string, _?: string) => {
               // `file` command on Windows:
               // https://github.com/julian-r/file-windows
               // note: `-L` option isn't supported in this version
