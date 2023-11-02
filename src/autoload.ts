@@ -188,7 +188,7 @@ const getMimetype =
               // note: `-L` option isn't supported in this version
               const args = ["file", "-b", "--mime-type", "--", file];
               const str: string = subprocess(args, true).stdout.trimEnd();
-              const mimeType = str.split("/");
+              const mimeType = str.split("/", 2);
               if (mimeType.length !== 2) {
                   throw new Error(JSON.stringify(args) + " returns: " + str);
               } else {
