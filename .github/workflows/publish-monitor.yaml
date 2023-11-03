@@ -1,0 +1,31 @@
+name: Monitor if need to publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - src/autoload.ts
+      - .github/workflows/publish.yaml
+      - package.json
+      - package-lock.json
+  pull_request:
+    branches:
+      - main
+    paths:
+      - src/autoload.ts
+      - .github/workflows/publish.yaml
+      - package.json
+      - package-lock.json
+
+jobs:
+  update-variable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: update
+        if: "${{ vars.SHOUD_PUBLISH }} == false"
+        uses: action-pack/set-variable@v1
+        with:
+          name: "SHOUD_PUBLISH"
+          value: "true"
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}

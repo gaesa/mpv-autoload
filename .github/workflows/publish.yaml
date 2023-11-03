@@ -1,21 +1,6 @@
 name: Build and Release
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - src/autoload.ts
-      - .github/workflows/publish.yaml
-      - package.json
-      - package-lock.json
-  pull_request:
-    branches:
-      - main
-    paths:
-      - src/autoload.ts
-      - .github/workflows/publish.yaml
-      - package.json
-      - package-lock.json
+  workflow_call:
   workflow_dispatch:
 
 jobs:
@@ -42,7 +27,7 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          echo "release_tag=$(date +%Y.%m.%d_%H-%M)" >> "$GITHUB_ENV"
+          echo "release_tag=$(date +%Y.%m.%d)" >> "$GITHUB_ENV"
 
       - name: Release
         uses: softprops/action-gh-release@v1

@@ -1,0 +1,24 @@
+name: Weekly check and possibly publish
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+
+jobs:
+  check-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger publish workflow if necessary
+        if: "${{ vars.SHOUD_PUBLISH }} == true"
+        uses: ./.github/workflows/publish.yaml
+
+  Reset-publish-flag:
+    needs: check-and-publish
+    runs-on: ubuntu-latest
+    steps:
+      - if: "${{ vars.SHOUD_PUBLISH }} == true"
+        uses: action-pack/set-variable@v1
+        with:
+          name: "SHOUD_PUBLISH"
+          value: "false"
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
