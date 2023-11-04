@@ -17,6 +17,7 @@ on:
       - .github/workflows/publish.yaml
       - package.json
       - package-lock.json
+  workflow_dispatch:
 
 jobs:
   update-variable:
