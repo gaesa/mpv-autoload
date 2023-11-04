@@ -29,4 +29,4 @@ jobs:
         with:
           name: "SHOULD_PUBLISH"
           value: "true"
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          token: ${{ secrets.VARIABLE_ASSIGNMENT }}
