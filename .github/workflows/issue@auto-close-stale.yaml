@@ -1,0 +1,21 @@
+name: issue@auto-close-stale
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+permissions:
+  issues: write
+
+jobs:
+  auto-close-stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v8
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-label: stale
+          days-before-stale: 7
+          days-before-close: 7
+          stale-issue-message: ""
+          close-issue-message: "This issue has been automatically closed due to 14 days of inactivity; feel free to reopen it if necessary."
