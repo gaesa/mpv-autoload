@@ -21,7 +21,6 @@ on:
 
 jobs:
   update-variable:
-    environment: publish
     runs-on: ubuntu-latest
     steps:
       - name: update

@@ -7,7 +7,6 @@ on:
 jobs:
   check-and-publish:
     runs-on: ubuntu-latest
-    environment: publish
     steps:
       - name: Trigger publish workflow if necessary
         if: ${{ vars.SHOULD_PUBLISH == 'true' }}
@@ -16,7 +15,6 @@ jobs:
   Reset-publish-flag:
     needs: check-and-publish
     runs-on: ubuntu-latest
-    environment: publish
     steps:
       - if: ${{ vars.SHOULD_PUBLISH == 'true' }}
         uses: action-pack/set-variable@v1
