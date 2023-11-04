@@ -1,4 +1,4 @@
-name: Monitor if need to publish
+name: "publish@watcher: Monitor if need to publish"
 
 on:
   push:
@@ -20,12 +20,13 @@ on:
 
 jobs:
   update-variable:
+    environment: publish
     runs-on: ubuntu-latest
     steps:
       - name: update
-        if: "${{ vars.SHOUD_PUBLISH }} == false"
+        if: "${{ vars.SHOULD_PUBLISH }} == false"
         uses: action-pack/set-variable@v1
         with:
-          name: "SHOUD_PUBLISH"
+          name: "SHOULD_PUBLISH"
           value: "true"
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
