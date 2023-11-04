@@ -10,7 +10,7 @@ jobs:
     environment: publish
     steps:
       - name: Trigger publish workflow if necessary
-        if: ${{ vars.SHOULD_PUBLISH == "true" }}
+        if: ${{ vars.SHOULD_PUBLISH == 'true' }}
         uses: ./.github/workflows/publish.yaml
 
   Reset-publish-flag:
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: publish
     steps:
-      - if: ${{ vars.SHOULD_PUBLISH == "true" }}
+      - if: ${{ vars.SHOULD_PUBLISH == 'true' }}
         uses: action-pack/set-variable@v1
         with:
           name: "SHOULD_PUBLISH"
