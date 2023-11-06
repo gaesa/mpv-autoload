@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Trigger publish workflow if necessary
         if: ${{ vars.SHOULD_PUBLISH == 'true' }}
-        uses: ./.github/workflows/publish.yaml
+        uses: ./.github/workflows/publish@main.yaml
 
   Reset-publish-flag:
     needs: check-and-publish
