@@ -8,7 +8,7 @@ on:
 jobs:
   check-and-publish:
     if: ${{ vars.SHOULD_PUBLISH == 'true' }}
-    uses: ./.github/workflows/publish@main.yaml
+    uses: ./.github/workflows/publish.yaml
 
   reset-publish-flag:
     needs: check-and-publish
