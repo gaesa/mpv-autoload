@@ -7,13 +7,10 @@ on:
 
 jobs:
   check-and-publish:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger publish workflow if necessary
-        if: ${{ vars.SHOULD_PUBLISH == 'true' }}
-        uses: ./.github/workflows/publish@main.yaml
+    if: ${{ vars.SHOULD_PUBLISH == 'true' }}
+    uses: ./.github/workflows/publish@main.yaml
 
-  Reset-publish-flag:
+  reset-publish-flag:
     needs: check-and-publish
     runs-on: ubuntu-latest
     steps:
