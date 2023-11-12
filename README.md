@@ -4,7 +4,7 @@
 
 - **Automatic Playlist Generation**: The script automatically identifies and loads video and audio files from the same directory into your playlist.
 - **Mixed Method for File Type Identification**: The script now uses a combination of file extension checks and mimetype checks to identify file types. This approach is more reliable and still fast, as it uses extension checks for common media files and mimetype checks for the rest.
-- **Plug-and-Play**: No configuration needed, works immediately upon installation.
+- **Easy Setup with Sensible Defaults**: The program works immediately upon installation with a default configuration that should be suitable for most use cases. However, it also offers flexible configuration options for advanced users who wish to customize their experience.
 
 ## Non-Features
 
@@ -42,6 +42,20 @@ cp dist/autoload.js ~/.config/mpv/scripts
 ## Usage
 
 Just move `autoload.js` to your mpv `scripts` folder and it will work out of the box. Enjoy your video and audio without any hassle!
+
+### Customization
+
+You may want to modify some of the default options. Currently, there are three available options: `commonVideo`, `commonAudio`, and `allowedMimeTypes`. The program first uses `commonVideo` and `commonAudio` to filter files in a directory. If a file passes this filter, it is added to the list. If not, the program checks the file’s mimetype. If the mimetype is in `allowedMimeTypes`, the file is also added to the list. Files that do not meet these criteria are not added to the list.
+
+You can add more extensions to `commonVideo` or `commonAudio` to speed up this process. Alternatively, you can assign an empty array `[]` to `commonAudio` and then assign `["video"]` to `allowedMimeTypes` to disable support for audio files.
+
+Here is the default configuration. You can copy it to `~/.config/mpv/script-opts/autoload.conf` and modify it to suit your needs:
+
+```
+commonVideo=[".mp4", ".mkv", ".webm"] # It's okay to leave spaces between the elements of the array.
+commonAudio=[".mp3", ".flac"]
+allowedMimeTypes=["video", "audio"] # The main type (e.g., 'video' in 'video/mp4')
+```
 
 ## Improvements Over [ `autoload.lua` ](https://github.com/mpv-player/mpv/blob/master/TOOLS/lua/autoload.lua)
 
