@@ -12,6 +12,8 @@
 
 2. **Limit Number of Files in Playlist**: This feature is not implemented because it could limit the flexibility of the program. I believe that users should have the freedom to include as many files in the playlist as they want.
 
+3. **Absence of Image Support**: The program does not support images, as mpv is primarily intended for video playback, not image viewing. For image viewing, there are other tools that are more suitable in this context, such as `imv`, `gwenview`, or various file managers which support the preview functionality.
+
 ## Requirements
 
 Ensure `mpv` can access the required dependencies:
