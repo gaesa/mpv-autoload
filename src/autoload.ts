@@ -6,6 +6,24 @@ import "core-js/es/set";
 const utils = mp.utils;
 const msg = mp.msg;
 
+namespace Config {
+    type Opts = {
+        // mpv only supports boolean, number and string conversions
+        [key: string]: string;
+    };
+
+    export const opts: Opts = {
+        commonVideo: JSON.stringify([".mp4", ".mkv", ".webm"]),
+        commonAudio: JSON.stringify([".mp3", ".flac"]),
+        allowedMimeTypes: JSON.stringify(["video", "audio"]),
+    };
+
+    mp.options.read_options(opts, mp.get_script_name());
+    Object.keys(opts).forEach((key) => {
+        opts[key] = JSON.parse(opts[key]);
+    });
+}
+
 function sort(array: any[], key?: (arg: any) => any) {
     array.sort((a, b) => {
         const [keyA, keyB] = key === void 0 ? [a, b] : [key(a), key(b)];
@@ -197,8 +215,8 @@ const getMimetype =
               }
           };
 
-function unionSet(...sets: Set<any>[]): Set<any> {
-    const mergedSet = new Set<any>();
+function unionSet<T>(...sets: Set<T>[]): Set<T> {
+    const mergedSet = new Set<T>();
     sets.forEach((set) => {
         set.forEach((elem) => {
             mergedSet.add(elem);
@@ -208,10 +226,11 @@ function unionSet(...sets: Set<any>[]): Set<any> {
 }
 
 function getFiles(dir: string, joinFlag: boolean = false): string[] {
-    const allowedTypes = new Set(["video", "audio"]);
-    const commonVideo = new Set([".mp4", ".mkv", ".webm"]);
-    const commonAudio = new Set([".mp3", ".flac"]);
-    const commonMedia = unionSet(commonVideo, commonAudio) as Set<string>;
+    const commonMedia = unionSet(
+        new Set(Config.opts.commonVideo),
+        new Set(Config.opts.commonAudio),
+    );
+    const allowedTypes = new Set(Config.opts.allowedMimeTypes);
 
     const files = utils.readdir(dir, "files") as string[];
     const toBeFiltered = joinFlag
