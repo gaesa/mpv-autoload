@@ -6,8 +6,8 @@ import "core-js/es/set";
 const utils = mp.utils;
 const msg = mp.msg;
 
-function sorted(list: any[], key?: (arg: any) => any) {
-    return list.slice().sort((a, b) => {
+function sort(list: any[], key?: (arg: any) => any) {
+    list.sort((a, b) => {
         const [keyA, keyB] = key === void 0 ? [a, b] : [key(a), key(b)];
         if (Array.isArray(keyA) && Array.isArray(keyB)) {
             for (let i = 0; i < keyA.length && i < keyB.length; i++) {
@@ -52,7 +52,8 @@ function natsort(strings: string[]): string[] {
         });
     }
 
-    return sorted(strings, key);
+    sort(strings, key);
+    return strings;
 }
 
 function subprocess(args: string[], check: boolean = false) {
