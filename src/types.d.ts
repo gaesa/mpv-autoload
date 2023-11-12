@@ -1,5 +1,5 @@
 declare const mp: any;
-declare const dump: (arg: any) => void;
+declare const dump: (...args: any[]) => void;
 
 declare module "core-js/es/string/starts-with";
 declare module "core-js/es/string/ends-with";
