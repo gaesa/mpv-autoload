@@ -6,8 +6,8 @@ import "core-js/es/set";
 const utils = mp.utils;
 const msg = mp.msg;
 
-function sort(list: any[], key?: (arg: any) => any) {
-    list.sort((a, b) => {
+function sort(array: any[], key?: (arg: any) => any) {
+    array.sort((a, b) => {
         const [keyA, keyB] = key === void 0 ? [a, b] : [key(a), key(b)];
         if (Array.isArray(keyA) && Array.isArray(keyB)) {
             for (let i = 0; i < keyA.length && i < keyB.length; i++) {
@@ -42,12 +42,12 @@ function natsort(strings: string[]): string[] {
     }
 
     function key(s: string) {
-        const splitList = s.split(/(\d+)/);
-        splitList[0] === "" ? splitList.shift() : void 0;
-        splitList.length > 0 && splitList[splitList.length - 1] === ""
-            ? splitList.pop()
+        const splitArr = s.split(/(\d+)/);
+        splitArr[0] === "" ? splitArr.shift() : void 0;
+        splitArr.length > 0 && splitArr[splitArr.length - 1] === ""
+            ? splitArr.pop()
             : void 0;
-        return splitList.map((text: string) => {
+        return splitArr.map((text: string) => {
             return isDigit(text) ? parseInt(text, 10) : text;
         });
     }
