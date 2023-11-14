@@ -52,9 +52,12 @@ You can add more extensions to `commonVideo` or `commonAudio` to speed up this p
 Here is the default configuration. You can copy it to `~/.config/mpv/script-opts/autoload.conf` and modify it to suit your needs:
 
 ```
-commonVideo=[".mp4", ".mkv", ".webm"] # It's okay to leave spaces between the elements of the array.
+# It's okay to leave spaces between the elements of the array.
+commonVideo=[".mp4", ".mkv", ".webm"]
 commonAudio=[".mp3", ".flac"]
-allowedMimeTypes=["video", "audio"] # The main type (e.g., 'video' in 'video/mp4')
+
+# The main type (e.g., 'video' in 'video/mp4')
+allowedMimeTypes=["video", "audio"]
 ```
 
 ## Improvements Over [ `autoload.lua` ](https://github.com/mpv-player/mpv/blob/master/TOOLS/lua/autoload.lua)
