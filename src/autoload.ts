@@ -286,36 +286,43 @@ function addFilesToPlaylist(files: string[], current: number) {
     mp.command_native(["playlist-move", 0, current + 1]);
 }
 
-function main() {
-    const path: string | undefined = mp.get_property_native("path");
-    if (path === void 0) {
-        msg.warn("Fail to get the path of the currently played file");
-    } else {
-        let [dir, file] = splitPath(path);
-        const joinFlag = utils.getcwd() !== dir;
-        file = joinFlag ? path : file;
+function main(path: string) {
+    let [dir, file] = splitPath(path);
+    const joinFlag = utils.getcwd() !== dir;
+    file = joinFlag ? path : file;
 
-        const files = getFiles(dir, joinFlag);
-        if (files.length === 0) {
-            msg.verbose("No other video or audio files in the directory");
+    const files = getFiles(dir, joinFlag);
+    if (files.length === 0) {
+        msg.verbose("No other video or audio files in the directory");
+    } else {
+        const current = fdCurrentEntryPos(files, file);
+        if (current === void 0) {
+            msg.warn(
+                "Can't find the position of the currently played file in media files",
+            );
         } else {
-            const current = fdCurrentEntryPos(files, file);
-            if (current === void 0) {
-                msg.warn(
-                    "Can't find the position of the currently played file in media files",
-                );
-            } else {
-                addFilesToPlaylist(files, current);
-            }
+            addFilesToPlaylist(files, current);
         }
     }
 }
 
 mp.register_event("start-file", () => {
-    const pl_count = mp.get_property_native("playlist-count", 1) as number;
-    if (checkPlaylist(pl_count)) {
-        main();
+    const path: string | undefined = mp.get_property_native("path");
+    if (path !== void 0) {
+        if (/^https?:\/\//.test(path)) {
+            return; // skip for remote media
+        } else {
+            const pl_count: number = mp.get_property_native(
+                "playlist-count",
+                1,
+            );
+            if (checkPlaylist(pl_count)) {
+                main(path);
+            } else {
+                return;
+            }
+        }
     } else {
-        return;
+        msg.warn("Fail to get the path of the currently played file");
     }
 });
