@@ -309,7 +309,7 @@ function main(path: string) {
 mp.register_event("start-file", () => {
     const path: string | undefined = mp.get_property_native("path");
     if (path !== void 0) {
-        if (/^https?:\/\//.test(path)) {
+        if (new RegExp("^.*://").test(path)) {
             return; // skip for remote media
         } else {
             const pl_count: number = mp.get_property_native(
