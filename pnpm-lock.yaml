@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   core-js:
-    specifier: ^3.33.1
-    version: 3.33.1
+    specifier: ^3.33.3
+    version: 3.33.3
 
 devDependencies:
   '@types/core-js':
@@ -380,8 +380,8 @@ packages:
     engines: {node: '>= 10'}
     dev: true
 
-  /core-js@3.33.1:
-    resolution: {integrity: sha512-qVSq3s+d4+GsqN0teRCJtM6tdEEXyWxjzbhVrCHmBS5ZTM0FS2MOS0D13dUXAWDUN6a+lHI/N1hF9Ytz6iLl9Q==}
+  /core-js@3.33.3:
+    resolution: {integrity: sha512-lo0kOocUlLKmm6kv/FswQL8zbkH7mVsLJ/FULClOhv8WRVmKLVcs6XPNQAzstfeJTCHMyButEwG+z1kHxHoDZw==}
     requiresBuild: true
     dev: false
 
