@@ -35,7 +35,7 @@ For Windows users, you can install `file` using Chocolatey with the command: `ch
 ```shell
 git clone https://github.com/gaesa/mpv-autoload
 cd mpv-autoload
-npm ci && npm run build
+pnpm install --frozen-lockfile && pnpm run build
 cp dist/autoload.js ~/.config/mpv/scripts
 ```
 

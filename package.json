@@ -4,8 +4,8 @@
   },
   "scripts": {
     "build:webpack": "webpack",
-    "build": "npm run build:webpack",
-    "analyze": "if [[ ! -f ./dist/stats.json ]]; then npm run build; fi && webpack-bundle-analyzer ./dist/stats.json"
+    "build": "pnpm run build:webpack",
+    "analyze": "if [[ ! -f ./dist/stats.json ]]; then pnpm run build; fi && webpack-bundle-analyzer ./dist/stats.json"
   },
   "devDependencies": {
     "@types/core-js": "^2.5.7",

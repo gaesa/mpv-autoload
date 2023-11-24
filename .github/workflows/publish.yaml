@@ -16,6 +16,11 @@ jobs:
         with:
           submodules: "recursive"
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -23,8 +28,10 @@ jobs:
 
       - name: Build
         run: |
-          npm ci
-          npm run build
+          pnpm install --frozen-lockfile
+          pnpm run build
+        with:
+          cache: "pnpm"
 
       - name: Generate release tag
         id: tag
