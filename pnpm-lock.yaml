@@ -10,9 +10,6 @@ dependencies:
     version: 3.33.3
 
 devDependencies:
-  '@types/core-js':
-    specifier: ^2.5.8
-    version: 2.5.8
   '@types/node':
     specifier: ^20.10.0
     version: 20.10.0
@@ -75,10 +72,6 @@ packages:
 
   /@polka/url@1.0.0-next.23:
     resolution: {integrity: sha512-C16M+IYz0rgRhWZdCmK+h58JMv8vijAA61gmz2rspCSwKwzBebpdcsiUmwrtJRdphuY30i6BSLEOP8ppbNLyLg==}
-    dev: true
-
-  /@types/core-js@2.5.8:
-    resolution: {integrity: sha512-VgnAj6tIAhJhZdJ8/IpxdatM8G4OD3VWGlp6xIxUGENZlpbob9Ty4VVdC1FIEp0aK6DBscDDjyzy5FB60TuNqg==}
     dev: true
 
   /@types/eslint-scope@3.7.6:
