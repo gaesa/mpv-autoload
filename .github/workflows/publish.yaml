@@ -25,13 +25,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "pnpm"
 
       - name: Build
         run: |
           pnpm install --frozen-lockfile
           pnpm run build
-        with:
-          cache: "pnpm"
 
       - name: Generate release tag
         id: tag
