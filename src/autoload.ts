@@ -16,6 +16,7 @@ namespace Config {
         commonVideo: JSON.stringify([".mp4", ".mkv", ".webm"]),
         commonAudio: JSON.stringify([".mp3", ".flac"]),
         allowedMimeTypes: JSON.stringify(["video", "audio"]),
+        ignoreHidden: JSON.stringify(true),
     };
 
     mp.options.read_options(opts, mp.get_script_name());
@@ -231,6 +232,7 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
         new Set(Config.opts.commonAudio),
     );
     const allowedTypes = new Set(Config.opts.allowedMimeTypes);
+    const ignoreHidden = Config.opts.ignoreHidden as unknown as boolean;
 
     const files = utils.readdir(dir, "files") as string[];
     const toBeFiltered = joinFlag
@@ -238,15 +240,26 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
               return utils.join_path(dir, file) as string;
           })
         : files;
+    const filterFn = (file: string) => {
+        const ext = splitExt(file)[1];
+        if (commonMedia.has(ext)) {
+            return true;
+        } else {
+            return allowedTypes.has(getMimetype(file, ext)[0]);
+        }
+    };
     return natsort(
-        toBeFiltered.filter((file: string) => {
-            const ext = splitExt(file)[1];
-            if (commonMedia.has(ext)) {
-                return true;
-            } else {
-                return allowedTypes.has(getMimetype(file, ext)[0]);
-            }
-        }),
+        toBeFiltered.filter(
+            ignoreHidden
+                ? (file: string) => {
+                      if (file.startsWith(".")) {
+                          return false;
+                      } else {
+                          return filterFn(file);
+                      }
+                  }
+                : filterFn,
+        ),
     );
 }
 

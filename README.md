@@ -58,6 +58,9 @@ commonAudio=[".mp3", ".flac"]
 
 # The main type (e.g., 'video' in 'video/mp4')
 allowedMimeTypes=["video", "audio"]
+
+# This option, either `true` or `false`, controls whether files beginning with a `.` are ignored.
+ignoreHidden=true
 ```
 
 ## Improvements Over [ `autoload.lua` ](https://github.com/mpv-player/mpv/blob/master/TOOLS/lua/autoload.lua)
