@@ -113,16 +113,16 @@ function splitExt(path: string): [string, string] {
     }
 }
 
-function getOS() {
-    function isdir(file: string): boolean {
-        const info = utils.file_info(file);
-        if (info === void 0) {
-            return false;
-        } else {
-            return info.is_dir;
-        }
+function isdir(file: string): boolean {
+    const info = utils.file_info(file);
+    if (info === void 0) {
+        return false;
+    } else {
+        return info.is_dir;
     }
+}
 
+function getOS() {
     function detectNonWindows() {
         const unameOutput = subprocess(
             ["uname", "-s"],
@@ -298,14 +298,18 @@ function validateInput(
         if (new RegExp("^.*://").test(path)) {
             return; // skip for remote media
         } else {
-            const pl_count: number = mp.get_property_native(
-                "playlist-count",
-                1,
-            );
-            if (pl_count > 1) {
+            if (isdir(path)) {
                 return; // skip for playlist
             } else {
-                continuation(path);
+                const pl_count: number = mp.get_property_native(
+                    "playlist-count",
+                    1,
+                );
+                if (pl_count > 1) {
+                    return; // skip for playlist
+                } else {
+                    continuation(path);
+                }
             }
         }
     } else {
