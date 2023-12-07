@@ -263,15 +263,6 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
     );
 }
 
-function checkPlaylist(pl_count: number) {
-    if (pl_count > 1) {
-        msg.verbose("Stopping: manually made playlist");
-        return false;
-    } else {
-        return true;
-    }
-}
-
 function fdCurrentEntryPos(files: string[], file: string) {
     const current = files.indexOf(file);
     if (current === -1) {
@@ -299,28 +290,10 @@ function addFilesToPlaylist(files: string[], current: number) {
     mp.command_native(["playlist-move", 0, current + 1]);
 }
 
-function main(path: string) {
-    let [dir, file] = splitPath(path);
-    const joinFlag = utils.getcwd() !== dir;
-    file = joinFlag ? path : file;
-
-    const files = getFiles(dir, joinFlag);
-    if (files.length === 0) {
-        msg.verbose("No other video or audio files in the directory");
-    } else {
-        const current = fdCurrentEntryPos(files, file);
-        if (current === void 0) {
-            msg.warn(
-                "Can't find the position of the currently played file in media files",
-            );
-        } else {
-            addFilesToPlaylist(files, current);
-        }
-    }
-}
-
-mp.register_event("start-file", () => {
-    const path: string | undefined = mp.get_property_native("path");
+function validateInput(
+    path: string | undefined,
+    continuation: (path: string) => void,
+): void {
     if (path !== void 0) {
         if (new RegExp("^.*://").test(path)) {
             return; // skip for remote media
@@ -329,13 +302,39 @@ mp.register_event("start-file", () => {
                 "playlist-count",
                 1,
             );
-            if (checkPlaylist(pl_count)) {
-                main(path);
+            if (pl_count > 1) {
+                return; // skip for playlist
             } else {
-                return;
+                continuation(path);
             }
         }
     } else {
         msg.warn("Fail to get the path of the currently played file");
+        return;
     }
-});
+}
+
+function main() {
+    const path: string | undefined = mp.get_property_native("path");
+    validateInput(path, (path: string) => {
+        let [dir, file] = splitPath(path);
+        const joinFlag = utils.getcwd() !== dir;
+        file = joinFlag ? path : file;
+
+        const files = getFiles(dir, joinFlag);
+        if (files.length === 0) {
+            msg.verbose("No other video or audio files in the directory");
+        } else {
+            const current = fdCurrentEntryPos(files, file);
+            if (current === void 0) {
+                msg.warn(
+                    "Can't find the position of the currently played file in media files",
+                );
+            } else {
+                addFilesToPlaylist(files, current);
+            }
+        }
+    });
+}
+
+mp.register_event("start-file", main);
