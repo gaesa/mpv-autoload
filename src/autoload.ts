@@ -122,6 +122,10 @@ function isDir(file: string): boolean {
     }
 }
 
+function exists(file: string): boolean {
+    return utils.file_info(file) !== void 0;
+}
+
 function getOS() {
     function detectNonWindows() {
         const unameOutput = subprocess(
@@ -298,18 +302,22 @@ function validateInput(
         if (new RegExp("^.*://").test(path)) {
             return; // skip for remote media
         } else {
-            if (isDir(path)) {
-                return; // skip for playlist
-            } else {
-                const pl_count: number = mp.get_property_native(
-                    "playlist-count",
-                    1,
-                );
-                if (pl_count > 1) {
+            if (exists(path)) {
+                if (isDir(path)) {
                     return; // skip for playlist
                 } else {
-                    continuation(path);
+                    const pl_count: number = mp.get_property_native(
+                        "playlist-count",
+                        1,
+                    );
+                    if (pl_count > 1) {
+                        return; // skip for playlist
+                    } else {
+                        continuation(path);
+                    }
                 }
+            } else {
+                return; // skip non-existing path
             }
         }
     } else {
