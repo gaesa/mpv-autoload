@@ -113,7 +113,7 @@ function splitExt(path: string): [string, string] {
     }
 }
 
-function isdir(file: string): boolean {
+function isDir(file: string): boolean {
     const info = utils.file_info(file);
     if (info === void 0) {
         return false;
@@ -141,7 +141,7 @@ function getOS() {
     if (platform === void 0) {
         if (utils.getenv("OS") === "Windows_NT") {
             const HOMEDRIVE = utils.getenv("HOMEDRIVE") as string | undefined;
-            if (HOMEDRIVE !== void 0 && isdir(HOMEDRIVE)) {
+            if (HOMEDRIVE !== void 0 && isDir(HOMEDRIVE)) {
                 return "windows";
             } else {
                 return detectNonWindows();
@@ -298,7 +298,7 @@ function validateInput(
         if (new RegExp("^.*://").test(path)) {
             return; // skip for remote media
         } else {
-            if (isdir(path)) {
+            if (isDir(path)) {
                 return; // skip for playlist
             } else {
                 const pl_count: number = mp.get_property_native(
