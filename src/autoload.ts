@@ -126,12 +126,13 @@ function getOS() {
             ["uname", "-s"],
             true,
         ).trimEnd() as string;
-        if (unameOutput === "Darwin") {
-            return "darwin";
-        } else if (unameOutput === "Linux") {
-            return "linux";
-        } else {
-            return unameOutput;
+        switch (unameOutput) {
+            case "Darwin":
+                return "darwin";
+            case "Linux":
+                return "linux";
+            default:
+                return unameOutput;
         }
     }
 
