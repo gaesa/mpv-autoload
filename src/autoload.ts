@@ -103,23 +103,17 @@ function subprocess(args: string[], check: boolean = false) {
 function splitExt(path: string): [string, string] {
     const [dir, file] = utils.split_path(path) as [string, string];
     const lastDotIndex = file.lastIndexOf(".");
-    if (lastDotIndex === 0) {
-        return [path, ""];
-    } else {
-        return [
-            utils.join_path(dir, file.slice(0, lastDotIndex)),
-            file.slice(lastDotIndex),
-        ];
-    }
+    return lastDotIndex === 0
+        ? [path, ""]
+        : [
+              utils.join_path(dir, file.slice(0, lastDotIndex)),
+              file.slice(lastDotIndex),
+          ];
 }
 
 function isDir(file: string): boolean {
     const info = utils.file_info(file);
-    if (info === void 0) {
-        return false;
-    } else {
-        return info.is_dir;
-    }
+    return info === void 0 ? false : info.is_dir;
 }
 
 function exists(file: string): boolean {
@@ -246,21 +240,15 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
         : files;
     const filterFn = (file: string) => {
         const ext = splitExt(file)[1];
-        if (commonMedia.has(ext)) {
-            return true;
-        } else {
-            return allowedTypes.has(getMimetype(file, ext)[0]);
-        }
+        return commonMedia.has(ext)
+            ? true
+            : allowedTypes.has(getMimetype(file, ext)[0]);
     };
     return natsort(
         toBeFiltered.filter(
             ignoreHidden
                 ? (file: string) => {
-                      if (file.startsWith(".")) {
-                          return false;
-                      } else {
-                          return filterFn(file);
-                      }
+                      return file.startsWith(".") ? false : filterFn(file);
                   }
                 : filterFn,
         ),
@@ -322,7 +310,6 @@ function validateInput(
         }
     } else {
         msg.warn("Fail to get the path of the currently played file");
-        return;
     }
 }
 
