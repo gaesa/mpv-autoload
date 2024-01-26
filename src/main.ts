@@ -59,7 +59,7 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
     );
 }
 
-function fdCurrentEntryPos(files: string[], file: string): number {
+function getCurrentEntryPos(files: string[], file: string): number {
     const current = files.indexOf(file);
     if (current !== -1) {
         msg.trace(`current file position in files: ${current}`);
@@ -121,7 +121,7 @@ function main(): void {
         if (files.length === 0) {
             msg.verbose("No other video or audio files in the directory");
         } else {
-            const current = fdCurrentEntryPos(files, file);
+            const current = getCurrentEntryPos(files, file);
             addFilesToPlaylist(files, current);
         }
     });
