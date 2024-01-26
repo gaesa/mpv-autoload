@@ -120,41 +120,8 @@ function exists(file: string): boolean {
     return utils.file_info(file) !== void 0;
 }
 
-function getOS() {
-    function detectNonWindows() {
-        const unameOutput = subprocess(
-            ["uname", "-s"],
-            true,
-        ).trimEnd() as string;
-        switch (unameOutput) {
-            case "Darwin":
-                return "darwin";
-            case "Linux":
-                return "linux";
-            default:
-                return unameOutput;
-        }
-    }
-
-    const platform = mp.get_property_native("platform") as string | undefined;
-    if (platform === void 0) {
-        if (utils.getenv("OS") === "Windows_NT") {
-            const HOMEDRIVE = utils.getenv("HOMEDRIVE") as string | undefined;
-            if (HOMEDRIVE !== void 0 && isDir(HOMEDRIVE)) {
-                return "windows";
-            } else {
-                return detectNonWindows();
-            }
-        } else {
-            return detectNonWindows();
-        }
-    } else {
-        return platform;
-    }
-}
-
 const getMimetype =
-    getOS() === "linux"
+    (mp.get_property_native("platform") as string) === "linux"
         ? (file: string, extension?: string) => {
               function getCheckedMime(
                   mimeType: string[],
