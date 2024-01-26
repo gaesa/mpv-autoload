@@ -59,13 +59,15 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
     );
 }
 
-function fdCurrentEntryPos(files: string[], file: string) {
+function fdCurrentEntryPos(files: string[], file: string): number {
     const current = files.indexOf(file);
-    if (current === -1) {
-        return void 0;
-    } else {
+    if (current !== -1) {
         msg.trace(`current file position in files: ${current}`);
         return current;
+    } else {
+        throw new Error(
+            "Can't find the position of the currently played file in media files",
+        );
     }
 }
 
@@ -120,13 +122,7 @@ function main(): void {
             msg.verbose("No other video or audio files in the directory");
         } else {
             const current = fdCurrentEntryPos(files, file);
-            if (current === void 0) {
-                msg.warn(
-                    "Can't find the position of the currently played file in media files",
-                );
-            } else {
-                addFilesToPlaylist(files, current);
-            }
+            addFilesToPlaylist(files, current);
         }
     });
 }
