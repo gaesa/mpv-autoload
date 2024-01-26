@@ -318,7 +318,7 @@ function main() {
     const path: string | undefined = mp.get_property_native("path");
     validateInput(path, (path: string) => {
         let [dir, file] = splitPath(path);
-        const joinFlag = utils.getcwd() !== dir;
+        const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
         file = joinFlag ? path : file;
 
         const files = getFiles(dir, joinFlag);
