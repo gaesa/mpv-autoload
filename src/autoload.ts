@@ -89,10 +89,9 @@ function subprocess(args: string[], check: boolean = false) {
         } else {
             throw new Error(
                 p.stderr +
-                    "Command " +
-                    JSON.stringify(args) +
-                    " returned non-zero exit status " +
-                    JSON.stringify(status),
+                    `Command ${JSON.stringify(
+                        args,
+                    )} returned non-zero exit status ${JSON.stringify(status)}`,
             );
         }
     } else {
@@ -131,7 +130,7 @@ const getMimetype =
                   if (mimeType.length !== 2) {
                       if (onError === void 0) {
                           throw new Error(
-                              JSON.stringify(args) + " returns: " + mimeType,
+                              `${JSON.stringify(args)} returns: ${mimeType}`,
                           );
                       } else {
                           return onError();
@@ -149,7 +148,7 @@ const getMimetype =
                         "xdg-mime",
                         "query",
                         "filetype",
-                        file.startsWith("-") ? "./" + file : file,
+                        file.startsWith("-") ? `./${file}` : file,
                     ];
 
               const str: string = subprocess(args, true).stdout.trimEnd();
@@ -163,7 +162,7 @@ const getMimetype =
                       return getCheckedMime(str.split("/", 2), fileArgs);
                   } else {
                       throw new Error(
-                          JSON.stringify(fileArgs) + " returns: " + str,
+                          `${JSON.stringify(fileArgs)} returns: ${str}`,
                       );
                   }
               });
@@ -176,7 +175,7 @@ const getMimetype =
               const str: string = subprocess(args, true).stdout.trimEnd();
               const mimeType = str.split("/", 2);
               if (mimeType.length !== 2) {
-                  throw new Error(JSON.stringify(args) + " returns: " + str);
+                  throw new Error(`${JSON.stringify(args)} returns: ${str}`);
               } else {
                   return mimeType as [string, string];
               }
@@ -228,7 +227,7 @@ function fdCurrentEntryPos(files: string[], file: string) {
     if (current === -1) {
         return void 0;
     } else {
-        msg.trace("current file position in files: " + current);
+        msg.trace(`current file position in files: ${current}`);
         return current;
     }
 }
