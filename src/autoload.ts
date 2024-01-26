@@ -7,22 +7,21 @@ const utils = mp.utils;
 const msg = mp.msg;
 
 namespace Config {
-    type Opts = {
-        // mpv only supports boolean, number and string conversions
-        [key: string]: string;
-    };
-
-    export const opts: Opts = {
+    // mpv only supports boolean, number and string conversions
+    const strOpts = {
         commonVideo: JSON.stringify([".mp4", ".mkv", ".webm"]),
         commonAudio: JSON.stringify([".mp3", ".flac"]),
         allowedMimeTypes: JSON.stringify(["video", "audio"]),
         ignoreHidden: JSON.stringify(true),
     };
+    mp.options.read_options(strOpts, mp.get_script_name());
 
-    mp.options.read_options(opts, mp.get_script_name());
-    Object.keys(opts).forEach((key) => {
-        opts[key] = JSON.parse(opts[key]);
-    });
+    export const opts = {
+        commonVideo: JSON.parse(strOpts.commonVideo) as string[],
+        commonAudio: JSON.parse(strOpts.commonAudio) as string[],
+        allowedMimeTypes: JSON.parse(strOpts.allowedMimeTypes) as string[],
+        ignoreHidden: JSON.parse(strOpts.ignoreHidden) as boolean,
+    };
 }
 
 function sort(array: any[], key?: (arg: any) => any) {
@@ -197,7 +196,7 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
         new Set(Config.opts.commonAudio),
     );
     const allowedTypes = new Set(Config.opts.allowedMimeTypes);
-    const ignoreHidden = Config.opts.ignoreHidden as unknown as boolean;
+    const ignoreHidden = Config.opts.ignoreHidden;
 
     const files = utils.readdir(dir, "files") as string[];
     const toBeFiltered = joinFlag
