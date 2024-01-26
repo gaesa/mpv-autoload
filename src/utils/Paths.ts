@@ -22,7 +22,7 @@ export function exists(file: string): boolean {
     return utils.file_info(file) !== void 0;
 }
 
-function stripTrailingSlash(path: string) {
+function stripTrailingSlash(path: string): string {
     return path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
 }
 
@@ -33,7 +33,7 @@ export function split(path: string): [string, string] {
 
 export const getMimetype =
     (mp.get_property_native("platform") as string) === "linux"
-        ? (file: string, extension?: string) => {
+        ? (file: string, extension?: string): [string, string] => {
               function getCheckedMime(
                   mimeType: string[],
                   args: string[],
@@ -79,7 +79,7 @@ export const getMimetype =
                   }
               });
           }
-        : (file: string, _?: string) => {
+        : (file: string, _?: string): [string, string] => {
               // `file` command on Windows:
               // https://github.com/julian-r/file-windows
               // note: `-L` option isn't supported in this version

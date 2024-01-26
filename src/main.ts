@@ -69,7 +69,7 @@ function fdCurrentEntryPos(files: string[], file: string) {
     }
 }
 
-function addFilesToPlaylist(files: string[], current: number) {
+function addFilesToPlaylist(files: string[], current: number): void {
     files.splice(current, 1);
     files.forEach((file: string) => {
         mp.command_native(["loadfile", file, "append"]);
@@ -108,7 +108,7 @@ function validateInput(
     }
 }
 
-function main() {
+function main(): void {
     const path: string | undefined = mp.get_property_native("path");
     validateInput(path, (path: string) => {
         let [dir, file] = Paths.split(path);
