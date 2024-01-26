@@ -4,6 +4,7 @@ export function run(args: string[], check: boolean = false) {
         name: "subprocess",
         playback_only: false,
         capture_stdout: true,
+        capture_stderr: true,
     });
     if (check) {
         const status = p.status as number;
