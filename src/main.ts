@@ -36,27 +36,31 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
     const allowedTypes = new Set(Config.opts.allowedMimeTypes);
     const ignoreHidden = Config.opts.ignoreHidden;
 
-    const files = utils.readdir(dir, "files") as string[];
-    const toBeFiltered = joinFlag
-        ? files.map((file: string) => {
-              return utils.join_path(dir, file) as string;
-          })
-        : files;
-    const filterFn = (file: string) => {
-        const ext = Paths.splitExt(file)[1];
-        return commonMedia.has(ext)
-            ? true
-            : allowedTypes.has(Paths.getMimetype(file, ext)[0]);
-    };
-    return Arrays.natsort(
-        toBeFiltered.filter(
-            ignoreHidden
-                ? (file: string) => {
-                      return file.startsWith(".") ? false : filterFn(file);
-                  }
-                : filterFn,
-        ),
-    );
+    const files = utils.readdir(dir, "files") as string[] | undefined;
+    if (files !== void 0) {
+        const toBeFiltered = joinFlag
+            ? files.map((file: string) => {
+                  return utils.join_path(dir, file) as string;
+              })
+            : files;
+        const filterFn = (file: string) => {
+            const ext = Paths.splitExt(file)[1];
+            return commonMedia.has(ext)
+                ? true
+                : allowedTypes.has(Paths.getMimetype(file, ext)[0]);
+        };
+        return Arrays.natsort(
+            toBeFiltered.filter(
+                ignoreHidden
+                    ? (file: string) => {
+                          return file.startsWith(".") ? false : filterFn(file);
+                      }
+                    : filterFn,
+            ),
+        );
+    } else {
+        throw new Error("'utils.readdir' occurred error");
+    }
 }
 
 function getCurrentEntryPos(files: string[], file: string): number {
