@@ -1,7 +1,11 @@
-import "core-js/es/string/starts-with";
-import "core-js/es/string/ends-with";
-import "core-js/es/string/trim-end";
 import "core-js/es/set";
+import "core-js/es/string/ends-with";
+import "core-js/es/string/starts-with";
+import "core-js/es/string/trim-end";
+
+import * as Arrays from "./utils/Arrays";
+import * as Paths from "./utils/Paths";
+import * as Sets from "./utils/Sets";
 
 const utils = mp.utils;
 const msg = mp.msg;
@@ -24,174 +28,8 @@ namespace Config {
     };
 }
 
-function sort(array: any[], key?: (arg: any) => any) {
-    array.sort((a, b) => {
-        const [keyA, keyB] = key === void 0 ? [a, b] : [key(a), key(b)];
-        if (Array.isArray(keyA) && Array.isArray(keyB)) {
-            for (let i = 0; i < keyA.length && i < keyB.length; i++) {
-                if (keyA[i] < keyB[i]) {
-                    return -1;
-                } else if (keyA[i] > keyB[i]) {
-                    return 1;
-                }
-            }
-            if (keyA.length < keyB.length) {
-                return -1;
-            } else if (keyA.length === keyB.length) {
-                return 0;
-            } else {
-                return 1;
-            }
-        } else {
-            if (keyA < keyB) {
-                return -1;
-            } else if (keyA === keyB) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-    });
-}
-
-function natsort(strings: string[]): string[] {
-    function isDigit(n: string) {
-        return /^\d+$/.test(n);
-    }
-
-    function key(s: string) {
-        const splitArr = s.split(/(\d+)/);
-        splitArr[0] === "" ? splitArr.shift() : void 0;
-        splitArr.length > 0 && splitArr[splitArr.length - 1] === ""
-            ? splitArr.pop()
-            : void 0;
-        return splitArr.map((text: string) => {
-            return isDigit(text) ? parseInt(text, 10) : text;
-        });
-    }
-
-    sort(strings, key);
-    return strings;
-}
-
-function subprocess(args: string[], check: boolean = false) {
-    const p = mp.command_native({
-        args: args,
-        name: "subprocess",
-        playback_only: false,
-        capture_stdout: true,
-    });
-    if (check) {
-        const status = p.status as number;
-        if (status === 0) {
-            return p;
-        } else {
-            throw new Error(
-                p.stderr +
-                    `Command ${JSON.stringify(
-                        args,
-                    )} returned non-zero exit status ${JSON.stringify(status)}`,
-            );
-        }
-    } else {
-        return p;
-    }
-}
-
-function splitExt(path: string): [string, string] {
-    const [dir, file] = utils.split_path(path) as [string, string];
-    const lastDotIndex = file.lastIndexOf(".");
-    return lastDotIndex === 0
-        ? [path, ""]
-        : [
-              utils.join_path(dir, file.slice(0, lastDotIndex)),
-              file.slice(lastDotIndex),
-          ];
-}
-
-function isDir(file: string): boolean {
-    const info = utils.file_info(file);
-    return info === void 0 ? false : info.is_dir;
-}
-
-function exists(file: string): boolean {
-    return utils.file_info(file) !== void 0;
-}
-
-const getMimetype =
-    (mp.get_property_native("platform") as string) === "linux"
-        ? (file: string, extension?: string) => {
-              function getCheckedMime(
-                  mimeType: string[],
-                  args: string[],
-                  onError?: () => [string, string],
-              ): [string, string] {
-                  if (mimeType.length !== 2) {
-                      if (onError === void 0) {
-                          throw new Error(
-                              `${JSON.stringify(args)} returns: ${mimeType}`,
-                          );
-                      } else {
-                          return onError();
-                      }
-                  } else {
-                      return mimeType as [string, string];
-                  }
-              }
-
-              const ext = extension === void 0 ? splitExt(file)[1] : extension;
-              const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
-              const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(ext)
-                  ? fileArgs
-                  : [
-                        "xdg-mime",
-                        "query",
-                        "filetype",
-                        file.startsWith("-") ? `./${file}` : file,
-                    ];
-
-              const str: string = subprocess(args, true).stdout.trimEnd();
-              const mimeType = str.split("/", 2);
-              return getCheckedMime(mimeType, args, () => {
-                  if (args[0] === "xdg-mime") {
-                      const str = subprocess(
-                          fileArgs,
-                          true,
-                      ).stdout.trimEnd() as string;
-                      return getCheckedMime(str.split("/", 2), fileArgs);
-                  } else {
-                      throw new Error(
-                          `${JSON.stringify(fileArgs)} returns: ${str}`,
-                      );
-                  }
-              });
-          }
-        : (file: string, _?: string) => {
-              // `file` command on Windows:
-              // https://github.com/julian-r/file-windows
-              // note: `-L` option isn't supported in this version
-              const args = ["file", "-b", "--mime-type", "--", file];
-              const str: string = subprocess(args, true).stdout.trimEnd();
-              const mimeType = str.split("/", 2);
-              if (mimeType.length !== 2) {
-                  throw new Error(`${JSON.stringify(args)} returns: ${str}`);
-              } else {
-                  return mimeType as [string, string];
-              }
-          };
-
-function unionSet<T>(...sets: Set<T>[]): Set<T> {
-    const mergedSet = new Set<T>();
-    sets.forEach((set) => {
-        set.forEach((elem) => {
-            mergedSet.add(elem);
-        });
-    });
-    return mergedSet;
-}
-
 function getFiles(dir: string, joinFlag: boolean = false): string[] {
-    const commonMedia = unionSet(
+    const commonMedia = Sets.union(
         new Set(Config.opts.commonVideo),
         new Set(Config.opts.commonAudio),
     );
@@ -205,12 +43,12 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
           })
         : files;
     const filterFn = (file: string) => {
-        const ext = splitExt(file)[1];
+        const ext = Paths.splitExt(file)[1];
         return commonMedia.has(ext)
             ? true
-            : allowedTypes.has(getMimetype(file, ext)[0]);
+            : allowedTypes.has(Paths.getMimetype(file, ext)[0]);
     };
-    return natsort(
+    return Arrays.natsort(
         toBeFiltered.filter(
             ignoreHidden
                 ? (file: string) => {
@@ -231,15 +69,6 @@ function fdCurrentEntryPos(files: string[], file: string) {
     }
 }
 
-function stripTrailingSlash(path: string) {
-    return path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
-}
-
-function splitPath(path: string): [string, string] {
-    const [dir, file] = utils.split_path(path) as [string, string];
-    return [stripTrailingSlash(dir), file];
-}
-
 function addFilesToPlaylist(files: string[], current: number) {
     files.splice(current, 1);
     files.forEach((file: string) => {
@@ -256,8 +85,8 @@ function validateInput(
         if (new RegExp("^.*://").test(path)) {
             return; // skip for remote media
         } else {
-            if (exists(path)) {
-                if (isDir(path)) {
+            if (Paths.exists(path)) {
+                if (Paths.isDir(path)) {
                     return; // skip for playlist
                 } else {
                     const pl_count: number = mp.get_property_native(
@@ -282,7 +111,7 @@ function validateInput(
 function main() {
     const path: string | undefined = mp.get_property_native("path");
     validateInput(path, (path: string) => {
-        let [dir, file] = splitPath(path);
+        let [dir, file] = Paths.split(path);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
         file = joinFlag ? path : file;
 
