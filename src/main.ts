@@ -63,7 +63,10 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
     }
 }
 
-function getCurrentEntryPos(files: string[], file: string): number {
+function getCurrentEntryPos(
+    files: ReadonlyArray<string>,
+    file: string,
+): number {
     const current = files.indexOf(file);
     if (current !== -1) {
         msg.trace(`current file position in files: ${current}`);
