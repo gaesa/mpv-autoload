@@ -1,4 +1,4 @@
-import * as Processes from "./Processes";
+import * as Processes from "./processes";
 
 const utils = mp.utils;
 
