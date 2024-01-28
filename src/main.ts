@@ -67,7 +67,10 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
     }
 }
 
-function filterMediaFiles(files: string[], ignoreHidden: boolean): string[] {
+function filterMediaFiles(
+    files: ReadonlyArray<string>,
+    ignoreHidden: boolean,
+): string[] {
     return files.filter(
         ignoreHidden
             ? (file: string) => {
