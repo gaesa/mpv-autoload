@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 export function assert(condition: boolean, message?: string): void {
     if (!condition) {
         throw new Error(message !== void 0 ? message : "Assertion failed");
