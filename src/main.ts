@@ -4,6 +4,7 @@ import "core-js/es/string/starts-with";
 import "core-js/es/string/trim-end";
 
 import * as Arrays from "./utils/arrays";
+import * as Asserts from "./utils/asserts";
 import * as Paths from "./utils/paths";
 import * as Sets from "./utils/sets";
 
@@ -21,10 +22,19 @@ namespace Config {
     mp.options.read_options(strOpts, mp.get_script_name());
 
     export const opts = {
-        commonVideo: JSON.parse(strOpts.commonVideo) as string[],
-        commonAudio: JSON.parse(strOpts.commonAudio) as string[],
-        allowedMimeTypes: JSON.parse(strOpts.allowedMimeTypes) as string[],
-        ignoreHidden: JSON.parse(strOpts.ignoreHidden) as boolean,
+        commonVideo: Asserts.requireArray(
+            JSON.parse(strOpts.commonVideo),
+            "string",
+        ),
+        commonAudio: Asserts.requireArray(
+            JSON.parse(strOpts.commonAudio),
+            "string",
+        ),
+        allowedMimeTypes: Asserts.requireArray(
+            JSON.parse(strOpts.allowedMimeTypes),
+            "string",
+        ),
+        ignoreHidden: Asserts.requireBoolean(JSON.parse(strOpts.ignoreHidden)),
     };
 }
 
