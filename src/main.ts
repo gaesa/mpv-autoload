@@ -21,56 +21,60 @@ namespace Config {
     };
     mp.options.read_options(strOpts, mp.get_script_name());
 
-    export const opts = {
-        commonVideo: Asserts.requireArray(
-            JSON.parse(strOpts.commonVideo),
-            "string",
-        ),
-        commonAudio: Asserts.requireArray(
-            JSON.parse(strOpts.commonAudio),
-            "string",
-        ),
-        allowedMimeTypes: Asserts.requireArray(
-            JSON.parse(strOpts.allowedMimeTypes),
-            "string",
-        ),
-        ignoreHidden: Asserts.requireBoolean(JSON.parse(strOpts.ignoreHidden)),
-    };
+    const commonVideo = Asserts.requireArray(
+        JSON.parse(strOpts.commonVideo),
+        "string",
+    );
+    const commonAudio = Asserts.requireArray(
+        JSON.parse(strOpts.commonAudio),
+        "string",
+    );
+    export const commonMedia = Sets.union(
+        new Set(commonVideo),
+        new Set(commonAudio),
+    );
+
+    export const allowedMimeTypes = new Set(
+        Asserts.requireArray(JSON.parse(strOpts.allowedMimeTypes), "string"),
+    );
+
+    export const ignoreHidden = Asserts.requireBoolean(
+        JSON.parse(strOpts.ignoreHidden),
+    );
 }
 
-function getFiles(dir: string, joinFlag: boolean = false): string[] {
-    const commonMedia = Sets.union(
-        new Set(Config.opts.commonVideo),
-        new Set(Config.opts.commonAudio),
-    );
-    const allowedTypes = new Set(Config.opts.allowedMimeTypes);
-    const ignoreHidden = Config.opts.ignoreHidden;
+function isMedia(file: string): boolean {
+    const ext = Paths.splitExt(file)[1];
+    return Config.commonMedia.has(ext)
+        ? true
+        : Config.allowedMimeTypes.has(Paths.getMimetype(file, ext)[0]);
+}
 
+/**
+ * Get files from a given directory, join directory and files as necessary
+ * @throws {Error} 'utils.readdir' occurred error
+ */
+function getFiles(dir: string, joinFlag: boolean = false): string[] {
     const files = utils.readdir(dir, "files") as string[] | undefined;
     if (files !== void 0) {
-        const toBeFiltered = joinFlag
+        return joinFlag
             ? files.map((file: string) => {
                   return utils.join_path(dir, file) as string;
               })
             : files;
-        const filterFn = (file: string) => {
-            const ext = Paths.splitExt(file)[1];
-            return commonMedia.has(ext)
-                ? true
-                : allowedTypes.has(Paths.getMimetype(file, ext)[0]);
-        };
-        return Arrays.natsort(
-            toBeFiltered.filter(
-                ignoreHidden
-                    ? (file: string) => {
-                          return file.startsWith(".") ? false : filterFn(file);
-                      }
-                    : filterFn,
-            ),
-        );
     } else {
         throw new Error("'utils.readdir' occurred error");
     }
+}
+
+function filterMediaFiles(files: string[], ignoreHidden: boolean): string[] {
+    return files.filter(
+        ignoreHidden
+            ? (file: string) => {
+                  return file.startsWith(".") ? false : isMedia(file);
+              }
+            : isMedia,
+    );
 }
 
 function getCurrentEntryPos(
@@ -96,30 +100,34 @@ function addFilesToPlaylist(files: string[], current: number): void {
     mp.command_native(["playlist-move", 0, current + 1]);
 }
 
-function validateInput(
+function validatePath(
     path: string | undefined,
     continuation: (path: string) => void,
 ): void {
+    function validateExistingPath(path: string) {
+        if (Paths.isDir(path)) {
+            return; // skip for pre-existing playlist
+        } else {
+            const pl_count: number = mp.get_property_native(
+                "playlist-count",
+                1,
+            );
+            if (pl_count > 1) {
+                return; // skip for pre-existing playlist
+            } else {
+                continuation(path);
+            }
+        }
+    }
+
     if (path !== void 0) {
         if (new RegExp("^.*://").test(path)) {
             return; // skip for remote media
         } else {
             if (Paths.exists(path)) {
-                if (Paths.isDir(path)) {
-                    return; // skip for playlist
-                } else {
-                    const pl_count: number = mp.get_property_native(
-                        "playlist-count",
-                        1,
-                    );
-                    if (pl_count > 1) {
-                        return; // skip for playlist
-                    } else {
-                        continuation(path);
-                    }
-                }
+                validateExistingPath(path);
             } else {
-                return; // skip non-existing path
+                return; // skip for non-existing path
             }
         }
     } else {
@@ -129,12 +137,14 @@ function validateInput(
 
 function main(): void {
     const path: string | undefined = mp.get_property_native("path");
-    validateInput(path, (path: string) => {
+    validatePath(path, (path: string) => {
         let [dir, file] = Paths.split(path);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
         file = joinFlag ? path : file;
 
-        const files = getFiles(dir, joinFlag);
+        const files = Arrays.natsort(
+            filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
+        );
         if (files.length === 0) {
             msg.verbose("No other video or audio files in the directory");
         } else {
