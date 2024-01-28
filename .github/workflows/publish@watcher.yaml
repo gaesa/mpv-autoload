@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - src/autoload.ts
+      - src/main.ts
       - .github/workflows/publish.yaml
       - package.json
       - pnpm-lock.yaml
