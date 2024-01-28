@@ -146,7 +146,7 @@ function main(): void {
             filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
         );
         if (files.length === 0) {
-            msg.verbose("No other video or audio files in the directory");
+            msg.verbose("No media files found in the directory");
         } else {
             const current = getCurrentEntryPos(files, file);
             addFilesToPlaylist(files, current);
