@@ -48,17 +48,20 @@ export function requireArray<T1 extends keyof Type, T2 extends Type[T1]>(
     type: T1,
     message?: string,
 ): T2[] {
-    assert(
-        Array.isArray(value),
-        message !== void 0 ? message : "Value must be an array",
-    );
-    (value as unknown[]).forEach((ele, index) => {
-        assert(
-            typeof ele === type,
-            message !== void 0
-                ? message
-                : `Element '${ele}' at index ${index} is not of type ${type}`,
-        );
-    });
+    if (message !== void 0) {
+        assert(Array.isArray(value), message);
+        (value as unknown[]).forEach((ele) => {
+            assert(typeof ele === type, message);
+        });
+    } else {
+        assert(Array.isArray(value), "Value must be an array");
+        (value as unknown[]).forEach((ele, index) => {
+            assert(
+                typeof ele === type,
+                // prettier-ignore
+                `Element '${String(ele)}' at index ${index} is not of type ${type}`,
+            );
+        });
+    }
     return value as T2[];
 }
