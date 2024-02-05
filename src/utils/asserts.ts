@@ -46,15 +46,20 @@ type Type = {
 export function requireArray<T1 extends keyof Type, T2 extends Type[T1]>(
     value: unknown,
     type: T1,
-    message?: string,
+    arrayTypeMessage?: string,
+    innerTypeMessage?: string,
 ): T2[] {
-    if (message !== void 0) {
-        assert(Array.isArray(value), message);
+    assert(
+        Array.isArray(value),
+        arrayTypeMessage !== void 0
+            ? arrayTypeMessage
+            : "Value must be an array",
+    );
+    if (innerTypeMessage !== void 0) {
         (value as unknown[]).forEach((ele) => {
-            assert(typeof ele === type, message);
+            assert(typeof ele === type, innerTypeMessage);
         });
     } else {
-        assert(Array.isArray(value), "Value must be an array");
         (value as unknown[]).forEach((ele, index) => {
             assert(
                 typeof ele === type,
