@@ -111,10 +111,7 @@ function validatePath(
         if (Paths.isDir(path)) {
             return; // skip for pre-existing playlist
         } else {
-            const pl_count: number = mp.get_property_native(
-                "playlist-count",
-                1,
-            );
+            const pl_count = mp.get_property_number("playlist-count", 1);
             if (pl_count > 1) {
                 return; // skip for pre-existing playlist
             } else {
@@ -139,7 +136,7 @@ function validatePath(
 }
 
 function main(): void {
-    const path: string | undefined = mp.get_property_native("path");
+    const path = mp.get_property("path");
     validatePath(path, (path: string) => {
         let [dir, file] = Paths.split(path);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
