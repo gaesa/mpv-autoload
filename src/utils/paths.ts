@@ -1,3 +1,6 @@
+import "core-js/es/string/starts-with";
+import "core-js/es/string/trim-end";
+
 import * as Processes from "./processes";
 
 const utils = mp.utils;

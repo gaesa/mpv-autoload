@@ -1,7 +1,6 @@
 import "core-js/es/set";
 import "core-js/es/string/ends-with";
 import "core-js/es/string/starts-with";
-import "core-js/es/string/trim-end";
 
 import * as Arrays from "./utils/arrays";
 import * as Asserts from "./utils/asserts";
