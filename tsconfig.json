@@ -6,6 +6,7 @@
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
+    "exactOptionalPropertyTypes": true,
     "noEmitOnError": true,
     "esModuleInterop": true
   },
