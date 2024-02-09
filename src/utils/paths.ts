@@ -1,3 +1,5 @@
+import "core-js/es/set";
+import "core-js/es/string/ends-with";
 import "core-js/es/string/starts-with";
 import "core-js/es/string/trim-end";
 
