@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - src/main.ts
+      - src/utils/*
       - .github/workflows/publish.yaml
       - package.json
       - pnpm-lock.yaml
