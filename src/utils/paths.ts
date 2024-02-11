@@ -32,12 +32,12 @@ function stripTrailingSlash(path: string): string {
 }
 
 export function split(path: string): [string, string] {
-    const [dir, file] = utils.split_path(path) as [string, string];
+    const [dir, file] = utils.split_path(path);
     return [stripTrailingSlash(dir), file];
 }
 
 export const getMimetype =
-    (mp.get_property_native("platform") as string) === "linux"
+    mp.get_property("platform") === "linux"
         ? (file: string, extension?: string): [string, string] => {
               function getCheckedMime(
                   mimeType: string[],
@@ -75,7 +75,7 @@ export const getMimetype =
                       const str = Processes.run(
                           fileArgs,
                           true,
-                      ).stdout.trimEnd() as string;
+                      ).stdout.trimEnd();
                       return getCheckedMime(str.split("/", 2), fileArgs);
                   } else {
                       throw new Error(

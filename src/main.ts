@@ -53,11 +53,11 @@ function isMedia(file: string): boolean {
  * @throws {Error} 'utils.readdir' occurred error
  */
 function getFiles(dir: string, joinFlag: boolean = false): string[] {
-    const files = utils.readdir(dir, "files") as string[] | undefined;
+    const files = utils.readdir(dir, "files");
     if (files !== void 0) {
         return joinFlag
             ? files.map((file: string) => {
-                  return utils.join_path(dir, file) as string;
+                  return utils.join_path(dir, file);
               })
             : files;
     } else {

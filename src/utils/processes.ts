@@ -7,7 +7,7 @@ export function run(args: string[], check: boolean = false) {
         capture_stderr: true,
     });
     if (check) {
-        const status = p.status as number;
+        const status = p.status;
         if (status === 0) {
             return p;
         } else {
