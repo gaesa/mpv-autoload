@@ -61,6 +61,9 @@ allowedMimeTypes=["video", "audio"]
 
 # This option, either `true` or `false`, controls whether files beginning with a `.` are ignored.
 ignoreHidden=true
+
+# Enable case-sensitive playlist entries sorting
+sortCaseSensitive=true
 ```
 
 ## Improvements Over [ `autoload.lua` ](https://github.com/mpv-player/mpv/blob/master/TOOLS/lua/autoload.lua)

@@ -43,20 +43,27 @@ function sort<T extends Comparable, U extends Comparable>(
     });
 }
 
-export function natsort(strings: string[]): string[] {
+export function natsort(
+    strings: string[],
+    caseSensitive: boolean = true,
+): string[] {
     function isDigit(n: string) {
         return /^\d+$/.test(n);
     }
 
+    const split = caseSensitive
+        ? (s: string) => s.split(/(\d+)/)
+        : (s: string) => s.toLowerCase().split(/(\d+)/);
+
     function key(s: string) {
-        const splitArr = s.split(/(\d+)/);
+        const splitArr = split(s);
         splitArr[0] === "" ? splitArr.shift() : void 0;
         splitArr.length > 0 && splitArr[splitArr.length - 1] === ""
             ? splitArr.pop()
             : void 0;
-        return splitArr.map((text: string) => {
-            return isDigit(text) ? parseInt(text, 10) : text;
-        });
+        return splitArr.map((text: string) =>
+            isDigit(text) ? parseInt(text, 10) : text,
+        );
     }
 
     sort(strings, key);

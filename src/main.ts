@@ -16,6 +16,7 @@ namespace Config {
         commonAudio: JSON.stringify([".mp3", ".flac"]),
         allowedMimeTypes: JSON.stringify(["video", "audio"]),
         ignoreHidden: JSON.stringify(true),
+        sortCaseSensitive: JSON.stringify(true),
     };
     mp.options.read_options(strOpts, mp.get_script_name());
 
@@ -38,6 +39,10 @@ namespace Config {
 
     export const ignoreHidden = Asserts.requireBoolean(
         JSON.parse(strOpts.ignoreHidden),
+    );
+
+    export const sortCaseSensitive = Asserts.requireBoolean(
+        JSON.parse(strOpts.sortCaseSensitive),
     );
 }
 
@@ -142,6 +147,7 @@ function main(): void {
 
         const files = Arrays.natsort(
             filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
+            Config.sortCaseSensitive,
         );
         if (files.length === 0) {
             msg.verbose("No media files found in the directory");
