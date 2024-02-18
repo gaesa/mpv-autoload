@@ -8,7 +8,7 @@ import * as Processes from "./processes";
 const utils = mp.utils;
 
 export function splitExt(path: string): [string, string] {
-    const [dir, file] = utils.split_path(path) as [string, string];
+    const [dir, file] = utils.split_path(path);
     const lastDotIndex = file.lastIndexOf(".");
     return lastDotIndex === 0
         ? [path, ""]
