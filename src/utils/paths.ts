@@ -27,9 +27,19 @@ export function exists(file: string): boolean {
     return utils.file_info(file) !== void 0;
 }
 
-function stripTrailingSlash(path: string): string {
-    return path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
+function isWindows(): boolean {
+    const platform = mp.get_property("platform");
+    if (platform !== void 0) {
+        return platform === "windows";
+    } else {
+        return exists("\\");
+    }
 }
+
+const stripTrailingSlash = isWindows()
+    ? (path: string): string => (path.endsWith("\\") ? path.slice(0, -1) : path)
+    : (path: string): string =>
+          path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
 
 export function split(path: string): [string, string] {
     const [dir, file] = utils.split_path(path);
