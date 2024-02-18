@@ -131,11 +131,13 @@ function validatePath(
 
     function validateExistingPath(path: string) {
         if (Paths.isDir(path)) {
-            return; // skip for pre-existing playlist
+            msg.verbose("Path is a directory; skip for pre-existing playlist");
         } else {
             const pl_count = mp.get_property_number("playlist-count", 1);
             if (pl_count > 1) {
-                return; // skip for pre-existing playlist
+                msg.verbose(
+                    "Path isn't a directory; skip for pre-existing playlist",
+                );
             } else {
                 continuation(stripLeadingDotSlash(path), isWindows);
             }
@@ -144,12 +146,12 @@ function validatePath(
 
     if (path !== void 0) {
         if (new RegExp("^.*://").test(path)) {
-            return; // skip for remote media
+            msg.verbose("Skip for remote media");
         } else {
             if (Paths.exists(path)) {
                 validateExistingPath(path);
             } else {
-                return; // skip for non-existing path
+                msg.verbose("Skip for non-existing path");
             }
         }
     } else {
