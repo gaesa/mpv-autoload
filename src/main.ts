@@ -113,13 +113,14 @@ function addFilesToPlaylist(files: string[], current: number): void {
 
 function validatePath(
     path: string | undefined,
-    continuation: (path: string) => void,
+    continuation: (path: string, isWindows: boolean) => void,
 ): void {
     function lstrip(str: string, prefix: string): string {
         return str.startsWith(prefix) ? str.slice(prefix.length) : str;
     }
 
-    const stripLeadingDotSlash = System.isWindows()
+    const isWindows = System.isWindows();
+    const stripLeadingDotSlash = isWindows
         ? (path: string): string => lstrip(path, ".\\")
         : (path: string): string => lstrip(path, "./");
 
@@ -131,7 +132,7 @@ function validatePath(
             if (pl_count > 1) {
                 return; // skip for pre-existing playlist
             } else {
-                continuation(stripLeadingDotSlash(path));
+                continuation(stripLeadingDotSlash(path), isWindows);
             }
         }
     }
@@ -153,11 +154,11 @@ function validatePath(
 
 function main(): void {
     const path = mp.get_property("path");
-    validatePath(path, (path: string) => {
+    validatePath(path, (path: string, isWindows: boolean) => {
         let [dir, file] = Paths.split(path);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
         file = joinFlag ? path : file;
-        file = System.isWindows() ? Paths.winToPosix(file) : file;
+        file = isWindows ? Paths.winToPosix(file) : file;
 
         const files = Arrays.natsort(
             filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
