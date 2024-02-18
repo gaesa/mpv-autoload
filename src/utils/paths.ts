@@ -39,9 +39,6 @@ function join_many(path: string, ...paths: string[]): string {
  *
  * Reason: The behaviour of `mp.utils.join_path` is different with `mp.utils.getcwd` and `mp.get_property("path")`.
  * See also: https://github.com/mpv-player/mpv/issues/6565
- *
- * @param path
- * @param paths
  */
 export const join = isWindows
     ? (path: string, ...paths: string[]): string =>
