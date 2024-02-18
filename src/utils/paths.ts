@@ -4,6 +4,7 @@ import "core-js/es/string/starts-with";
 import "core-js/es/string/trim-end";
 
 import * as Processes from "./processes";
+import * as System from "./system";
 
 const utils = mp.utils;
 
@@ -27,16 +28,7 @@ export function exists(file: string): boolean {
     return utils.file_info(file) !== void 0;
 }
 
-function isWindows(): boolean {
-    const platform = mp.get_property("platform");
-    if (platform !== void 0) {
-        return platform === "windows";
-    } else {
-        return exists("\\");
-    }
-}
-
-const stripTrailingSlash = isWindows()
+const stripTrailingSlash = System.isWindows()
     ? (path: string): string => (path.endsWith("\\") ? path.slice(0, -1) : path)
     : (path: string): string =>
           path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
