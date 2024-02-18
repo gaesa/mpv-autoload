@@ -28,6 +28,10 @@ export function exists(file: string): boolean {
     return utils.file_info(file) !== void 0;
 }
 
+export function winToPosix(path: string) {
+    return path.replace(/\\/g, "/");
+}
+
 const stripTrailingSlash = System.isWindows()
     ? (path: string): string => (path.endsWith("\\") ? path.slice(0, -1) : path)
     : (path: string): string =>

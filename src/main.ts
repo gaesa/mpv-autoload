@@ -56,6 +56,10 @@ function isMedia(file: string): boolean {
 
 /**
  * Get files from a given directory, join directory and files as necessary
+ *
+ * Note: On windows, `mp.utils.join_path` still uses `/` as path separator,
+ * which is different with `mp.utils.getcwd` and `mp.get_property("path")`;
+ *
  * @throws {Error} 'utils.readdir' occurred error
  */
 function getFiles(dir: string, joinFlag: boolean = false): string[] {
@@ -153,6 +157,7 @@ function main(): void {
         let [dir, file] = Paths.split(path);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
         file = joinFlag ? path : file;
+        file = System.isWindows() ? Paths.winToPosix(file) : file;
 
         const files = Arrays.natsort(
             filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
