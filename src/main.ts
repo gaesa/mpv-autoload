@@ -5,6 +5,7 @@ import * as Arrays from "./utils/arrays";
 import * as Asserts from "./utils/asserts";
 import * as Paths from "./utils/paths";
 import * as Sets from "./utils/sets";
+import * as Strings from "./utils/strings";
 import * as System from "./utils/system";
 
 const utils = mp.utils;
@@ -118,17 +119,8 @@ function addFilesToPlaylist(files: string[], current: number): void {
 
 function validatePath(
     path: string | undefined,
-    continuation: (path: string, isWindows: boolean) => void,
+    continuation: (path: string) => void,
 ): void {
-    function lstrip(str: string, prefix: string): string {
-        return str.startsWith(prefix) ? str.slice(prefix.length) : str;
-    }
-
-    const isWindows = System.isWindows();
-    const stripLeadingDotSlash = isWindows
-        ? (path: string): string => lstrip(path, ".\\")
-        : (path: string): string => lstrip(path, "./");
-
     function validateExistingPath(path: string) {
         if (Paths.isDir(path)) {
             msg.verbose("Path is a directory; skip for pre-existing playlist");
@@ -139,7 +131,7 @@ function validatePath(
                     "Path isn't a directory; skip for pre-existing playlist",
                 );
             } else {
-                continuation(stripLeadingDotSlash(path), isWindows);
+                continuation(path);
             }
         }
     }
@@ -159,12 +151,16 @@ function validatePath(
     }
 }
 
+const stripLeadingDotSlash = System.isWindows
+    ? (path: string): string => Strings.lstrip(path, ".\\")
+    : (path: string): string => Strings.lstrip(path, "./");
+
 function main(): void {
-    const path = mp.get_property("path");
-    validatePath(path, (path: string, isWindows: boolean) => {
-        let [dir, file] = Paths.split(path);
+    validatePath(mp.get_property("path"), (path: string) => {
+        const preProcessedPath = stripLeadingDotSlash(path);
+        let [dir, file] = Paths.split(preProcessedPath);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
-        file = joinFlag ? path : file;
+        file = joinFlag ? preProcessedPath : file;
         // HACK: Both `Paths.split` and `utils.getcwd` are cross-platform,
         // but `utils.join_path` isn't; it always uses `/` as the path separator.
         // To find the currently played media in the playlist,
@@ -175,7 +171,7 @@ function main(): void {
         // we would have to wrap/fix again for the `file` command,
         // which would require significant effort and could introduce performance issues.
         // For now, we'll just change the `file` variable.
-        file = isWindows ? file.replace(/\\/g, "/") : file;
+        file = System.isWindows ? file.replace(/\\/g, "/") : file;
 
         const files = Arrays.natsort(
             filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),

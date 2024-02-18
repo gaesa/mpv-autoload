@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import "core-js/es/set";
 import "core-js/es/string/ends-with";
 import "core-js/es/string/starts-with";
@@ -28,8 +30,6 @@ export function exists(file: string): boolean {
     return utils.file_info(file) !== void 0;
 }
 
-const isWindows = System.isWindows();
-
 function join_many(path: string, ...paths: string[]): string {
     return paths.reduce(utils.join_path, path);
 }
@@ -40,12 +40,12 @@ function join_many(path: string, ...paths: string[]): string {
  * Reason: The behaviour of `mp.utils.join_path` is different with `mp.utils.getcwd` and `mp.get_property("path")`.
  * See also: https://github.com/mpv-player/mpv/issues/6565
  */
-export const join = isWindows
+export const join = System.isWindows
     ? (path: string, ...paths: string[]): string =>
           join_many(path, ...paths).replace(/\//g, "\\")
     : join_many;
 
-const stripTrailingSlash = isWindows
+const stripTrailingSlash = System.isWindows
     ? (path: string): string => (path.endsWith("\\") ? path.slice(0, -1) : path)
     : (path: string): string =>
           path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
