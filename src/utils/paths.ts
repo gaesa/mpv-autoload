@@ -10,7 +10,7 @@ import * as System from "./system";
 
 const utils = mp.utils;
 
-export function splitExt(path: string): [string, string] {
+export function splitExt(path: string): Readonly<[string, string]> {
     const [dir, file] = utils.split_path(path);
     const lastDotIndex = file.lastIndexOf(".");
     return lastDotIndex === 0
@@ -50,19 +50,19 @@ const stripTrailingSlash = System.isWindows
     : (path: string): string =>
           path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
 
-export function split(path: string): [string, string] {
+export function split(path: string): Readonly<[string, string]> {
     const [dir, file] = utils.split_path(path);
     return [stripTrailingSlash(dir), file];
 }
 
 export const getMimetype =
     mp.get_property("platform") === "linux"
-        ? (file: string, extension?: string): [string, string] => {
+        ? (file: string, extension?: string): Readonly<[string, string]> => {
               function getCheckedMime(
-                  mimeType: string[],
-                  args: string[],
-                  onError?: () => [string, string],
-              ): [string, string] {
+                  mimeType: ReadonlyArray<string>,
+                  args: ReadonlyArray<string>,
+                  onError?: () => Readonly<[string, string]>,
+              ): Readonly<[string, string]> {
                   if (mimeType.length !== 2) {
                       if (onError === void 0) {
                           throw new Error(
@@ -72,7 +72,7 @@ export const getMimetype =
                           return onError();
                       }
                   } else {
-                      return mimeType as [string, string];
+                      return mimeType as Readonly<[string, string]>;
                   }
               }
 
@@ -103,7 +103,7 @@ export const getMimetype =
                   }
               });
           }
-        : (file: string, _?: string): [string, string] => {
+        : (file: string, _?: string): Readonly<[string, string]> => {
               // `file` command on Windows:
               // https://github.com/julian-r/file-windows
               // note: `-L` option isn't supported in this version
@@ -113,6 +113,7 @@ export const getMimetype =
               if (mimeType.length !== 2) {
                   throw new Error(`${JSON.stringify(args)} returns: ${str}`);
               } else {
-                  return mimeType as [string, string];
+                  // @ts-ignore
+                  return mimeType as Readonly<[string, string]>;
               }
           };
