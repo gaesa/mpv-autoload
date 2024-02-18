@@ -56,6 +56,15 @@ function isMedia(file: string): boolean {
 
 /**
  * Get files from a given directory, join directory and files as necessary
+ *
+ * Note: The current implementation utilizes `mp.utils.join_path`,
+ * which would result in paths containing `/` even on Windows.
+ * Due to the complexity and potential performance implications of
+ * fixing issues related to the `file` command,
+ * `mp.utils.join_path` is not wrapped to support `\` on Windows.
+ *
+ * See also: https://github.com/mpv-player/mpv/issues/6565
+ *
  * @throws {Error} 'utils.readdir' occurred error
  */
 function getFiles(dir: string, joinFlag: boolean = false): string[] {
@@ -63,7 +72,7 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
     if (files !== void 0) {
         return joinFlag
             ? files.map((file: string) => {
-                  return Paths.join(dir, file);
+                  return utils.join_path(dir, file);
               })
             : files;
     } else {
@@ -109,13 +118,14 @@ function addFilesToPlaylist(files: string[], current: number): void {
 
 function validatePath(
     path: string | undefined,
-    continuation: (path: string) => void,
+    continuation: (path: string, isWindows: boolean) => void,
 ): void {
     function lstrip(str: string, prefix: string): string {
         return str.startsWith(prefix) ? str.slice(prefix.length) : str;
     }
 
-    const stripLeadingDotSlash = System.isWindows()
+    const isWindows = System.isWindows();
+    const stripLeadingDotSlash = isWindows
         ? (path: string): string => lstrip(path, ".\\")
         : (path: string): string => lstrip(path, "./");
 
@@ -127,7 +137,7 @@ function validatePath(
             if (pl_count > 1) {
                 return; // skip for pre-existing playlist
             } else {
-                continuation(stripLeadingDotSlash(path));
+                continuation(stripLeadingDotSlash(path), isWindows);
             }
         }
     }
@@ -149,10 +159,21 @@ function validatePath(
 
 function main(): void {
     const path = mp.get_property("path");
-    validatePath(path, (path: string) => {
+    validatePath(path, (path: string, isWindows: boolean) => {
         let [dir, file] = Paths.split(path);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
         file = joinFlag ? path : file;
+        // HACK: Both `Paths.split` and `utils.getcwd` are cross-platform,
+        // but `utils.join_path` isn't; it always uses `/` as the path separator.
+        // To find the currently played media in the playlist,
+        // we can either change the `file` variable or wrap/fix `utils.join_path`.
+        // The latter option is also related to another issue:
+        // the dependent `file` command doesn't support `\` as a path separator.
+        // To work around this new issue,
+        // we would have to wrap/fix again for the `file` command,
+        // which would require significant effort and could introduce performance issues.
+        // For now, we'll just change the `file` variable.
+        file = isWindows ? file.replace(/\\/g, "/") : file;
 
         const files = Arrays.natsort(
             filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
