@@ -3,7 +3,7 @@ type Comparable = number | string | Date;
 function sort<T extends Comparable, U extends Comparable>(
     array: T[],
     key?: (arg: T) => U | U[],
-) {
+): void {
     type Mapped = T | U | U[];
     array.sort((a, b): number => {
         const [keyA, keyB]: [Mapped, Mapped] =
