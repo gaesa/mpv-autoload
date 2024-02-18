@@ -56,10 +56,6 @@ function isMedia(file: string): boolean {
 
 /**
  * Get files from a given directory, join directory and files as necessary
- *
- * Note: On windows, `mp.utils.join_path` still uses `/` as path separator,
- * which is different with `mp.utils.getcwd` and `mp.get_property("path")`;
- *
  * @throws {Error} 'utils.readdir' occurred error
  */
 function getFiles(dir: string, joinFlag: boolean = false): string[] {
@@ -67,7 +63,7 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
     if (files !== void 0) {
         return joinFlag
             ? files.map((file: string) => {
-                  return utils.join_path(dir, file);
+                  return Paths.join(dir, file);
               })
             : files;
     } else {
@@ -113,14 +109,13 @@ function addFilesToPlaylist(files: string[], current: number): void {
 
 function validatePath(
     path: string | undefined,
-    continuation: (path: string, isWindows: boolean) => void,
+    continuation: (path: string) => void,
 ): void {
     function lstrip(str: string, prefix: string): string {
         return str.startsWith(prefix) ? str.slice(prefix.length) : str;
     }
 
-    const isWindows = System.isWindows();
-    const stripLeadingDotSlash = isWindows
+    const stripLeadingDotSlash = System.isWindows()
         ? (path: string): string => lstrip(path, ".\\")
         : (path: string): string => lstrip(path, "./");
 
@@ -132,7 +127,7 @@ function validatePath(
             if (pl_count > 1) {
                 return; // skip for pre-existing playlist
             } else {
-                continuation(stripLeadingDotSlash(path), isWindows);
+                continuation(stripLeadingDotSlash(path));
             }
         }
     }
@@ -154,11 +149,10 @@ function validatePath(
 
 function main(): void {
     const path = mp.get_property("path");
-    validatePath(path, (path: string, isWindows: boolean) => {
+    validatePath(path, (path: string) => {
         let [dir, file] = Paths.split(path);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
         file = joinFlag ? path : file;
-        file = isWindows ? Paths.winToPosix(file) : file;
 
         const files = Arrays.natsort(
             filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),

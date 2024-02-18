@@ -28,11 +28,27 @@ export function exists(file: string): boolean {
     return utils.file_info(file) !== void 0;
 }
 
-export function winToPosix(path: string) {
-    return path.replace(/\\/g, "/");
+const isWindows = System.isWindows();
+
+function join_many(path: string, ...paths: string[]): string {
+    return paths.reduce(utils.join_path, path);
 }
 
-const stripTrailingSlash = System.isWindows()
+/**
+ * A wrapper for `mp.utils.join_path` to not always use `/` as path separator.
+ *
+ * Reason: The behaviour of `mp.utils.join_path` is different with `mp.utils.getcwd` and `mp.get_property("path")`.
+ * See also: https://github.com/mpv-player/mpv/issues/6565
+ *
+ * @param path
+ * @param paths
+ */
+export const join = isWindows
+    ? (path: string, ...paths: string[]): string =>
+          join_many(path, ...paths).replace(/\//g, "\\")
+    : join_many;
+
+const stripTrailingSlash = isWindows
     ? (path: string): string => (path.endsWith("\\") ? path.slice(0, -1) : path)
     : (path: string): string =>
           path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
