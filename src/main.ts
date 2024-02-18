@@ -5,6 +5,7 @@ import * as Arrays from "./utils/arrays";
 import * as Asserts from "./utils/asserts";
 import * as Paths from "./utils/paths";
 import * as Sets from "./utils/sets";
+import * as System from "./utils/system";
 
 const utils = mp.utils;
 const msg = mp.msg;
@@ -110,6 +111,14 @@ function validatePath(
     path: string | undefined,
     continuation: (path: string) => void,
 ): void {
+    function lstrip(str: string, prefix: string): string {
+        return str.startsWith(prefix) ? str.slice(prefix.length) : str;
+    }
+
+    const stripLeadingDotSlash = System.isWindows()
+        ? (path: string): string => lstrip(path, ".\\")
+        : (path: string): string => lstrip(path, "./");
+
     function validateExistingPath(path: string) {
         if (Paths.isDir(path)) {
             return; // skip for pre-existing playlist
@@ -118,7 +127,7 @@ function validatePath(
             if (pl_count > 1) {
                 return; // skip for pre-existing playlist
             } else {
-                continuation(path);
+                continuation(stripLeadingDotSlash(path));
             }
         }
     }
