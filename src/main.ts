@@ -63,9 +63,9 @@ function isMedia(file: string): boolean {
  * fixing issues related to the `file` command,
  * `mp.utils.join_path` is not wrapped to support `\` on Windows.
  *
- * See also: https://github.com/mpv-player/mpv/issues/6565
- *
  * @throws {Error} 'utils.readdir' can't get files from `dir`
+ *
+ * @see https://github.com/mpv-player/mpv/issues/6565
  */
 function getFiles(dir: string, joinFlag: boolean = false): string[] {
     const files = utils.readdir(dir, "files");

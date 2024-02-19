@@ -38,7 +38,8 @@ function join_many(path: string, ...paths: string[]): string {
  * A wrapper for `mp.utils.join_path` to not always use `/` as path separator.
  *
  * Reason: The behaviour of `mp.utils.join_path` is different with `mp.utils.getcwd` and `mp.get_property("path")`.
- * See also: https://github.com/mpv-player/mpv/issues/6565
+ *
+ * @see https://github.com/mpv-player/mpv/issues/6565
  */
 export const join = System.isWindows
     ? (path: string, ...paths: string[]): string =>
