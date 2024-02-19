@@ -159,9 +159,9 @@ function main(): void {
             : // remove leading dot to avoid conflict with the `ignoreHidden` feature
               Strings.lstrip(path, "./");
 
-        let [dir, file] = Paths.split(preProcessedPath);
+        const [dir, file] = Paths.split(preProcessedPath);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
-        file = joinFlag ? preProcessedPath : file;
+        const accessibleFile = joinFlag ? preProcessedPath : file;
 
         const files = Arrays.natsort(
             filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
@@ -170,7 +170,7 @@ function main(): void {
         if (files.length === 0) {
             msg.verbose("No media files found in the directory");
         } else {
-            const current = getCurrentEntryPos(files, file);
+            const current = getCurrentEntryPos(files, accessibleFile);
             addFilesToPlaylist(files, current);
         }
     });
