@@ -76,7 +76,7 @@ const isAbsolute = System.isWindows
     : (path: string) => path.startsWith("/");
 
 /**
- * Normalizes a given file path by eliminating `.` and `..` segments.
+ * Normalizes a given file path by eliminating `.`, `..` and redundant separators.
  * Only process `/` as the path separator.
  *
  * @param {string} path - The file path to normalize.
@@ -84,7 +84,7 @@ const isAbsolute = System.isWindows
  * @returns {string} The normalized file path.
  */
 export function normalize(path: string, cwd?: string): string {
-    const parts = path.split("/"),
+    const parts = stripTrailingSlash(path.replace(/\/{2,}/g, "/")).split("/"),
         normalizedParts: string[] = [];
 
     if (cwd !== void 0 && !isAbsolute(path)) {
