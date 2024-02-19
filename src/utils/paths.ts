@@ -76,20 +76,19 @@ const isAbsolute = System.isWindows
     : (path: string) => path.startsWith("/");
 
 /**
- * Resolves a given file path by eliminating `.` and `..` segments.
- * Symbolic links are not considered in the resolution.
+ * Normalizes a given file path by eliminating `.` and `..` segments.
  * Only process `/` as the path separator.
  *
- * @param {string} path - The file path to resolve.
+ * @param {string} path - The file path to normalize.
  * @param {string} [cwd] - The current working directory. Optional.
- * @returns {string} The resolved file path.
+ * @returns {string} The normalized file path.
  */
-export function resolve(path: string, cwd?: string): string {
+export function normalize(path: string, cwd?: string): string {
     const parts = path.split("/"),
-        resolvedParts: string[] = [];
+        normalizedParts: string[] = [];
 
     if (cwd !== void 0 && !isAbsolute(path)) {
-        resolvedParts.push(...cwd.split("/"));
+        normalizedParts.push(...cwd.split("/"));
     }
 
     parts.forEach((part) => {
@@ -97,18 +96,18 @@ export function resolve(path: string, cwd?: string): string {
             return;
         } else if (part === "..") {
             if (
-                resolvedParts.length > 0 &&
-                resolvedParts[resolvedParts.length - 1] !== ".."
+                normalizedParts.length > 0 &&
+                normalizedParts[normalizedParts.length - 1] !== ".."
             ) {
-                resolvedParts.pop();
+                normalizedParts.pop();
             } else {
-                resolvedParts.push(part);
+                normalizedParts.push(part);
             }
         } else {
-            resolvedParts.push(part);
+            normalizedParts.push(part);
         }
     });
-    return resolvedParts.join("/");
+    return normalizedParts.join("/");
 }
 
 export const getMimetype =

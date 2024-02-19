@@ -155,12 +155,12 @@ function main(): void {
         const cwd = utils.getcwd();
         const preProcessedPath = System.isWindows
             ? // replace `\` with `/` since `file` command can't handle `\` in path
-              Paths.resolve(
+              Paths.normalize(
                   Paths.winToPosix(path),
                   cwd !== void 0 ? Paths.winToPosix(cwd) : cwd,
               )
             : // remove leading dot to avoid conflict with the `ignoreHidden` feature
-              Paths.resolve(path, cwd);
+              Paths.normalize(path, cwd);
 
         const [dir, file] = Paths.split(preProcessedPath);
         const joinFlag = dir === "." ? false : cwd !== dir;
