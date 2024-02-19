@@ -64,9 +64,9 @@ export function split(path: string): readonly [string, string] {
  * Converts a Windows-style file path to a POSIX-style file path
  * by replacing backslashes `\` with forward slashes `/`.
  */
-export function winToPosix(path: string): string {
-    return path.replace(/\\/g, "/");
-}
+const winToPosix = System.isWindows
+    ? (path: string): string => path.replace(/\\/g, "/")
+    : (path: string) => path;
 
 const isAbsolute = System.isWindows
     ? (path: string) =>
@@ -77,18 +77,20 @@ const isAbsolute = System.isWindows
 
 /**
  * Normalizes a given file path by eliminating `.`, `..` and redundant separators.
- * Only process `/` as the path separator.
+ * On Windows backslashes are converted to `/`.
  *
  * @param {string} path - The file path to normalize.
  * @param {string} [cwd] - The current working directory. Optional.
  * @returns {string} The normalized file path.
  */
 export function normalize(path: string, cwd?: string): string {
-    const parts = stripTrailingSlash(path.replace(/\/{2,}/g, "/")).split("/"),
+    const normSep = (path: string) =>
+        stripTrailingSlash(winToPosix(path).replace(/\/{2,}/g, "/"));
+    const parts = normSep(path).split("/"),
         normalizedParts: string[] = [];
 
     if (cwd !== void 0 && !isAbsolute(path)) {
-        normalizedParts.push(...cwd.split("/"));
+        normalizedParts.push(...winToPosix(cwd).split("/"));
     }
 
     parts.forEach((part) => {
