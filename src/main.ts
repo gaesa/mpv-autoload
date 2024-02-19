@@ -81,7 +81,7 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
 }
 
 function filterMediaFiles(
-    files: ReadonlyArray<string>,
+    files: readonly string[],
     ignoreHidden: boolean,
 ): string[] {
     return files.filter(
@@ -93,10 +93,7 @@ function filterMediaFiles(
     );
 }
 
-function getCurrentEntryPos(
-    files: ReadonlyArray<string>,
-    file: string,
-): number {
+function getCurrentEntryPos(files: readonly string[], file: string): number {
     const current = files.indexOf(file);
     if (current !== -1) {
         msg.trace(`current file position in files: ${current}`);

@@ -10,7 +10,7 @@ import * as System from "./system";
 
 const utils = mp.utils;
 
-export function splitExt(path: string): Readonly<[string, string]> {
+export function splitExt(path: string): readonly [string, string] {
     const [dir, file] = utils.split_path(path);
     const lastDotIndex = file.lastIndexOf(".");
     return lastDotIndex === 0
@@ -55,7 +55,7 @@ const stripTrailingSlash = System.isWindows
     : (path: string): string =>
           path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
 
-export function split(path: string): Readonly<[string, string]> {
+export function split(path: string): readonly [string, string] {
     const [dir, file] = utils.split_path(path);
     return [stripTrailingSlash(dir), file];
 }
@@ -112,12 +112,12 @@ export function normalize(path: string, cwd?: string): string {
 
 export const getMimetype =
     mp.get_property("platform") === "linux"
-        ? (file: string, extension?: string): Readonly<[string, string]> => {
+        ? (file: string, extension?: string): readonly [string, string] => {
               function getCheckedMime(
-                  mimeType: ReadonlyArray<string>,
-                  args: ReadonlyArray<string>,
-                  onError?: () => Readonly<[string, string]>,
-              ): Readonly<[string, string]> {
+                  mimeType: readonly string[],
+                  args: readonly string[],
+                  onError?: () => readonly [string, string],
+              ): readonly [string, string] {
                   if (mimeType.length !== 2) {
                       if (onError === void 0) {
                           throw new Error(
@@ -127,7 +127,7 @@ export const getMimetype =
                           return onError();
                       }
                   } else {
-                      return mimeType as Readonly<[string, string]>;
+                      return mimeType as readonly [string, string];
                   }
               }
 
@@ -158,7 +158,7 @@ export const getMimetype =
                   }
               });
           }
-        : (file: string, _?: string): Readonly<[string, string]> => {
+        : (file: string, _?: string): readonly [string, string] => {
               // `file` command on Windows:
               // https://github.com/julian-r/file-windows
               // note: `-L` option isn't supported in this version
@@ -169,6 +169,6 @@ export const getMimetype =
                   throw new Error(`${JSON.stringify(args)} returns: ${str}`);
               } else {
                   // @ts-ignore
-                  return mimeType as Readonly<[string, string]>;
+                  return mimeType as readonly [string, string];
               }
           };
