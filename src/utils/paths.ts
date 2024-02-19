@@ -48,8 +48,8 @@ export const join = System.isWindows
 
 const stripTrailingSlash = System.isWindows
     ? (path: string): string =>
-          (path.endsWith("\\") || path.endsWith("/")) &&
-          !(path.endsWith(":\\") || path.endsWith(":/"))
+          (path.endsWith("\\") && !path.endsWith(":\\")) ||
+          (path.endsWith("/") && !path.endsWith(":/"))
               ? path.slice(0, -1)
               : path
     : (path: string): string =>
