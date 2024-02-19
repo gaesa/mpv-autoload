@@ -5,7 +5,6 @@ import * as Arrays from "./utils/arrays";
 import * as Asserts from "./utils/asserts";
 import * as Paths from "./utils/paths";
 import * as Sets from "./utils/sets";
-import * as Strings from "./utils/strings";
 import * as System from "./utils/system";
 
 const utils = mp.utils;
@@ -153,14 +152,18 @@ function validatePath(
 
 function main(): void {
     validatePath(mp.get_property("path"), (path: string) => {
+        const cwd = utils.getcwd();
         const preProcessedPath = System.isWindows
             ? // replace `\` with `/` since `file` command can't handle `\` in path
-              Strings.lstrip(path, ".\\").replace(/\\/g, "/")
+              Paths.resolve(
+                  Paths.winToPosix(path),
+                  cwd !== void 0 ? Paths.winToPosix(cwd) : cwd,
+              )
             : // remove leading dot to avoid conflict with the `ignoreHidden` feature
-              Strings.lstrip(path, "./");
+              Paths.resolve(path, cwd);
 
         const [dir, file] = Paths.split(preProcessedPath);
-        const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
+        const joinFlag = dir === "." ? false : cwd !== dir;
         const accessibleFile = joinFlag ? preProcessedPath : file;
 
         const files = Arrays.natsort(

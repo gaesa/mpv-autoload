@@ -59,6 +59,57 @@ export function split(path: string): Readonly<[string, string]> {
     return [stripTrailingSlash(dir), file];
 }
 
+/**
+ * Converts a Windows-style file path to a POSIX-style file path
+ * by replacing backslashes `\` with forward slashes `/`.
+ */
+export function winToPosix(path: string): string {
+    return path.replace(/\\/g, "/");
+}
+
+const isAbsolute = System.isWindows
+    ? (path: string) =>
+          new RegExp("^.:").test(path) ||
+          path.startsWith("/") ||
+          path.startsWith("\\")
+    : (path: string) => path.startsWith("/");
+
+/**
+ * Resolves a given file path by eliminating `.` and `..` segments.
+ * Symbolic links are not considered in the resolution.
+ * Only process `/` as the path separator.
+ *
+ * @param {string} path - The file path to resolve.
+ * @param {string} [cwd] - The current working directory. Optional.
+ * @returns {string} The resolved file path.
+ */
+export function resolve(path: string, cwd?: string): string {
+    const parts = path.split("/"),
+        resolvedParts: string[] = [];
+
+    if (cwd !== void 0 && !isAbsolute(path)) {
+        resolvedParts.push(...cwd.split("/"));
+    }
+
+    parts.forEach((part) => {
+        if (part === ".") {
+            return;
+        } else if (part === "..") {
+            if (
+                resolvedParts.length > 0 &&
+                resolvedParts[resolvedParts.length - 1] !== ".."
+            ) {
+                resolvedParts.pop();
+            } else {
+                resolvedParts.push(part);
+            }
+        } else {
+            resolvedParts.push(part);
+        }
+    });
+    return resolvedParts.join("/");
+}
+
 export const getMimetype =
     mp.get_property("platform") === "linux"
         ? (file: string, extension?: string): Readonly<[string, string]> => {

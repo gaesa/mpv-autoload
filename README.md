@@ -79,10 +79,6 @@ With these improvements, `autoload.ts` provides a cleaner, more efficient, and r
 
 ## Known Limitations
 
-### Path resolution
-
-Currently, only leading `.` in path argument can be properly resolved, `.` in the middle of path or `..` in the path is not resolved yet.
-
 ### Performance issues on calling external commands
 
 The `autoload.ts` script leverages the `getMimetype` function to filter all video and audio files within a directory. It’s important to note that this operation is not recursive. This is because the `mp.utils.readdir` function does not recursively return files.
