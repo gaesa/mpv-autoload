@@ -46,7 +46,11 @@ export const join = System.isWindows
     : join_many;
 
 const stripTrailingSlash = System.isWindows
-    ? (path: string): string => (path.endsWith("\\") ? path.slice(0, -1) : path)
+    ? (path: string): string =>
+          (path.endsWith("\\") || path.endsWith("/")) &&
+          !(path.endsWith(":\\") || path.endsWith(":/"))
+              ? path.slice(0, -1)
+              : path
     : (path: string): string =>
           path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
 

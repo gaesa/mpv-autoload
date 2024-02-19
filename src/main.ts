@@ -151,27 +151,17 @@ function validatePath(
     }
 }
 
-const stripLeadingDotSlash = System.isWindows
-    ? (path: string): string => Strings.lstrip(path, ".\\")
-    : (path: string): string => Strings.lstrip(path, "./");
-
 function main(): void {
     validatePath(mp.get_property("path"), (path: string) => {
-        const preProcessedPath = stripLeadingDotSlash(path);
+        const preProcessedPath = System.isWindows
+            ? // replace `\` with `/` since `file` command can't handle `\` in path
+              Strings.lstrip(path, ".\\").replace(/\\/g, "/")
+            : // remove leading dot to avoid conflict with the `ignoreHidden` feature
+              Strings.lstrip(path, "./");
+
         let [dir, file] = Paths.split(preProcessedPath);
         const joinFlag = dir === "." ? false : utils.getcwd() !== dir;
         file = joinFlag ? preProcessedPath : file;
-        // HACK: Both `Paths.split` and `utils.getcwd` are cross-platform,
-        // but `utils.join_path` isn't; it always uses `/` as the path separator.
-        // To find the currently played media in the playlist,
-        // we can either change the `file` variable or wrap/fix `utils.join_path`.
-        // The latter option is also related to another issue:
-        // the dependent `file` command doesn't support `\` as a path separator.
-        // To work around this new issue,
-        // we would have to wrap/fix again for the `file` command,
-        // which would require significant effort and could introduce performance issues.
-        // For now, we'll just change the `file` variable.
-        file = System.isWindows ? file.replace(/\\/g, "/") : file;
 
         const files = Arrays.natsort(
             filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
