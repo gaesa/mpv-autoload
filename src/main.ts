@@ -66,7 +66,7 @@ function isMedia(file: string): boolean {
  *
  * See also: https://github.com/mpv-player/mpv/issues/6565
  *
- * @throws {Error} 'utils.readdir' occurred error
+ * @throws {Error} 'utils.readdir' can't get files from `dir`
  */
 function getFiles(dir: string, joinFlag: boolean = false): string[] {
     const files = utils.readdir(dir, "files");
@@ -77,7 +77,7 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
               })
             : files;
     } else {
-        throw new Error("'utils.readdir' occurred error");
+        throw new Error(`'utils.readdir' can't get files from ${dir}`);
     }
 }
 
