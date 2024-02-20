@@ -70,10 +70,21 @@ const winToPosix = System.isWindows
 
 const isAbsolute = System.isWindows
     ? (path: string) =>
-          new RegExp("^.:").test(path) ||
+          (new RegExp("^[A-Za-z]:").test(path) &&
+              // mpv treats `C://` as a protocol instead of a path
+              !new RegExp("^[A-Za-z]://").test(path)) ||
           path.startsWith("/") ||
           path.startsWith("\\")
     : (path: string) => path.startsWith("/");
+
+export function isLocal(path: string): boolean {
+    return (
+        isAbsolute(path) ||
+        // `file://` is already stripped by `mp.get_property("path")`
+        // path.startsWith("file://") ||
+        !new RegExp("^[a-zA-Z][a-zA-Z0-9+-.]*://").test(path)
+    );
+}
 
 /**
  * Normalizes a given file path by eliminating `.`, `..` and redundant separators.

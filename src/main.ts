@@ -132,7 +132,7 @@ function validatePath(
     }
 
     if (path !== void 0) {
-        if (new RegExp("^.*://").test(path)) {
+        if (!Paths.isLocal(path)) {
             msg.verbose("Skip for remote media");
         } else {
             if (Paths.exists(path)) {
