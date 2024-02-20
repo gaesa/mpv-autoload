@@ -46,7 +46,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.release_tag }}
-          body_path: ${{ steps.git-cliff.outputs.content }}
+          body: ${{ steps.git-cliff.outputs.content }}
           files: |
             dist/autoload.js
         env:
