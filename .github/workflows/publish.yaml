@@ -36,10 +36,17 @@ jobs:
         run: |
           echo "release_tag=$(date +%Y.%m.%d)" >> "$GITHUB_ENV"
 
+      - name: Generate the changelog
+        uses: orhun/git-cliff-action@v3
+        id: git-cliff
+        with:
+          args: -vv --unreleased --tag=${{ env.release_tag }} --strip=header
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.release_tag }}
+          body_path: ${{ steps.git-cliff.outputs.content }}
           files: |
             dist/autoload.js
         env:
