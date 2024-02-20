@@ -32,7 +32,7 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm run build
 
-      - name: Generate release tag
+      - name: Generate the release tag
         run: |
           echo "release_tag=$(date +%Y.%m.%d)" >> "$GITHUB_ENV"
 
