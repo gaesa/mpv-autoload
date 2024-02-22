@@ -131,9 +131,15 @@ function validatePath(
         }
     }
 
+    function getProtocolFromURI(uri: string): string {
+        return uri.slice(0, uri.indexOf("://") + 3);
+    }
+
     if (path !== void 0) {
         if (!Paths.isPath(path)) {
-            msg.verbose("Skip for unsupported protocols");
+            msg.verbose(
+                `Skip for the unsupported protocol '${getProtocolFromURI(path)}'`,
+            );
         } else {
             if (Paths.exists(path)) {
                 validateExistingPath(path);
