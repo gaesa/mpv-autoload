@@ -76,12 +76,15 @@ const isAbsolute = System.isWindows
           path.startsWith("\\")
     : (path: string) => path.startsWith("/");
 
-export function isLocal(path: string): boolean {
+/**
+ * Checks if the given string represents a path rather than a non-`file://` URI.
+ */
+export function isPath(path: string): boolean {
     return (
         isAbsolute(path) ||
         // `file://` is already stripped by `mp.get_property("path")`
         // path.startsWith("file://") ||
-        !new RegExp("^[a-zA-Z][a-zA-Z0-9+-.]*://").test(path)
+        !new RegExp("^[a-zA-Z][a-zA-Z0-9+-.]*://").test(path) //relative path
     );
 }
 

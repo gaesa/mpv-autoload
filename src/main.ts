@@ -132,8 +132,8 @@ function validatePath(
     }
 
     if (path !== void 0) {
-        if (!Paths.isLocal(path)) {
-            msg.verbose("Skip for remote media");
+        if (!Paths.isPath(path)) {
+            msg.verbose("Skip for unsupported protocols");
         } else {
             if (Paths.exists(path)) {
                 validateExistingPath(path);
