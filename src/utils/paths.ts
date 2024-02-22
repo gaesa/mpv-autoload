@@ -70,9 +70,8 @@ const winToPosix = System.isWindows
 
 const isAbsolute = System.isWindows
     ? (path: string) =>
-          (new RegExp("^[A-Za-z]:").test(path) &&
-              // mpv treats `C://` as a protocol instead of a path
-              !new RegExp("^[A-Za-z]://").test(path)) ||
+          // mpv treats `C://` as a protocol instead of a path
+          new RegExp("^[A-Za-z]:(?!/{2})").test(path) ||
           path.startsWith("/") ||
           path.startsWith("\\")
     : (path: string) => path.startsWith("/");
