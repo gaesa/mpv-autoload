@@ -12,18 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           submodules: "recursive"
           fetch-depth: 0
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # v3
         with:
           version: 8
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4
         with:
           node-version: 20
           cache: "pnpm"
@@ -38,13 +38,13 @@ jobs:
           echo "release_tag=$(date +%Y.%m.%d)" >> "$GITHUB_ENV"
 
       - name: Generate the changelog
-        uses: orhun/git-cliff-action@v3
+        uses: orhun/git-cliff-action@90ed560c895459ac2ae450a00604a6ad02a78478 # v3
         id: git-cliff
         with:
           args: -vv --unreleased --tag=${{ env.release_tag }} --strip=header
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@975c1b265e11dd76618af1c374e7981f9a6ff44a
         with:
           tag_name: ${{ env.release_tag }}
           body: ${{ steps.git-cliff.outputs.content }}
@@ -54,7 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cleanup Old Releases
-        uses: dev-drprasad/delete-older-releases@v0.3.2
+        uses: dev-drprasad/delete-older-releases@0bf4e6748f08135170c2294f877ba7d9b633b028
         with:
           keep_latest: 3
           delete_tags: true # defaults to false
