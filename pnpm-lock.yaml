@@ -11,8 +11,8 @@ dependencies:
 
 devDependencies:
   '@types/mpv-script':
-    specifier: ^0.32.7
-    version: 0.32.7
+    specifier: ^0.32.8
+    version: 0.32.8
   ts-loader:
     specifier: ^9.5.1
     version: 9.5.1(typescript@5.2.2)(webpack@5.90.3)
@@ -96,8 +96,8 @@ packages:
     resolution: {integrity: sha512-U3PUjAudAdJBeC2pgN8uTIKgxrb4nlDF3SF0++EldXQvQBGkpFZMSnwQiIoDU77tv45VgNkl/L4ouD+rEomujw==}
     dev: true
 
-  /@types/mpv-script@0.32.7:
-    resolution: {integrity: sha512-0ipwFDI6sMOViU9hm5mjFAXP983lgYVEpwEa57axfqGDHU3q+prekWRq4iC4DIblrqAMw1Q1sI/WzgweRWAXzA==}
+  /@types/mpv-script@0.32.8:
+    resolution: {integrity: sha512-FghPilWokSIoMnezoyrfetgPIE26wD3GlxK6oaRKbgkNzYnEnhK/B9TeaKRD7GNKyUJdX9pAHfnasyChhZvQSg==}
     dev: true
 
   /@types/node@20.10.6:
