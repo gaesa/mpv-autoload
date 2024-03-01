@@ -8,7 +8,7 @@
     "analyze": "if [[ ! -f ./dist/stats.json ]]; then pnpm run build; fi && webpack-bundle-analyzer ./dist/stats.json"
   },
   "devDependencies": {
-    "@types/mpv-script": "^0.32.7",
+    "@types/mpv-script": "^0.32.8",
     "ts-loader": "^9.5.1",
     "webpack": "^5.90.3",
     "webpack-bundle-analyzer": "^4.10.1",
