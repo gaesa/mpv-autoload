@@ -99,12 +99,10 @@ export function isPath(path: string): boolean {
 export function normalize(path: string, cwd?: string): string {
     const normSep = (path: string) =>
         stripTrailingSlash(winToPosix(path).replace(/\/{2,}/g, "/"));
-    const parts = normSep(path).split("/"),
-        normalizedParts: string[] = [];
-
-    if (cwd !== void 0 && !isAbsolute(path)) {
-        normalizedParts.push(...winToPosix(cwd).split("/"));
-    }
+    const parts = normSep(path).split("/");
+    const normalizedParts: string[] =
+        // prettier-ignore
+        (cwd !== void 0 && !isAbsolute(path)) ? winToPosix(cwd).split("/") : [];
 
     parts.forEach((part) => {
         if (part === ".") {
