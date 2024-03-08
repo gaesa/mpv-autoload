@@ -1,8 +1,17 @@
 // noinspection JSUnusedGlobalSymbols
 
+export class AssertionError extends Error {
+    constructor(message: string = "Assertion failed") {
+        super(message);
+        this.name = "AssertionError";
+    }
+}
+
 export function assert(condition: boolean, message?: string): void {
     if (!condition) {
-        throw new Error(message !== void 0 ? message : "Assertion failed");
+        throw new AssertionError(
+            message !== void 0 ? message : "Assertion failed",
+        );
     } else {
         return;
     }
