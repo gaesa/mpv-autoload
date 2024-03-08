@@ -7,37 +7,38 @@ export class AssertionError extends Error {
     }
 }
 
-export function assert(condition: boolean, message?: string): void {
+export function assert(
+    condition: boolean,
+    message: string = "Assertion failed",
+): void {
     if (!condition) {
-        throw new AssertionError(
-            message !== void 0 ? message : "Assertion failed",
-        );
+        throw new AssertionError(message);
     } else {
         return;
     }
 }
 
-export function requireNumber(value: unknown, message?: string): number {
-    assert(
-        typeof value === "number",
-        message !== void 0 ? message : "Value must be a number",
-    );
+export function requireNumber(
+    value: unknown,
+    message: string = "Value must be a number",
+): number {
+    assert(typeof value === "number", message);
     return value as number;
 }
 
-export function requireBoolean(value: unknown, message?: string): boolean {
-    assert(
-        typeof value === "boolean",
-        message !== void 0 ? message : "Value must be a boolean",
-    );
+export function requireBoolean(
+    value: unknown,
+    message: string = "Value must be a boolean",
+): boolean {
+    assert(typeof value === "boolean", message);
     return value as boolean;
 }
 
-export function requireString(value: unknown, message?: string): string {
-    assert(
-        typeof value === "string",
-        message !== void 0 ? message : "Value must be a string",
-    );
+export function requireString(
+    value: unknown,
+    message: string = "Value must be a string",
+): string {
+    assert(typeof value === "string", message);
     return value as string;
 }
 
@@ -55,15 +56,10 @@ type Type = {
 export function requireArray<T1 extends keyof Type, T2 extends Type[T1]>(
     value: unknown,
     type: T1,
-    arrayTypeMessage?: string,
+    arrayTypeMessage: string = "Value must be an array",
     innerTypeMessage?: string,
 ): T2[] {
-    assert(
-        Array.isArray(value),
-        arrayTypeMessage !== void 0
-            ? arrayTypeMessage
-            : "Value must be an array",
-    );
+    assert(Array.isArray(value), arrayTypeMessage);
     if (innerTypeMessage !== void 0) {
         (value as unknown[]).forEach((ele) => {
             assert(typeof ele === type, innerTypeMessage);
