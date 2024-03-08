@@ -140,12 +140,10 @@ function validatePath(
             msg.verbose(
                 `Skip for the unsupported protocol '${getProtocolFromURI(path)}'`,
             );
+        } else if (Paths.exists(path)) {
+            validateExistingPath(path);
         } else {
-            if (Paths.exists(path)) {
-                validateExistingPath(path);
-            } else {
-                msg.verbose("Skip for non-existing path");
-            }
+            msg.verbose("Skip for non-existing path");
         }
     } else {
         msg.warn("Fail to get the path of the currently played file");
