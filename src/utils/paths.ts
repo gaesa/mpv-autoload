@@ -7,6 +7,7 @@ import "core-js/es/string/trim-end";
 
 import * as Processes from "./processes";
 import * as System from "./system";
+import { ArrayStack } from "./collection";
 
 const utils = mp.utils;
 
@@ -100,27 +101,20 @@ export function normalize(path: string, cwd?: string): string {
     const normSep = (path: string) =>
         stripTrailingSlash(winToPosix(path).replace(/\/{2,}/g, "/"));
     const parts = normSep(path).split("/");
-    const normalizedParts: string[] =
-        // prettier-ignore
-        (cwd !== void 0 && !isAbsolute(path)) ? winToPosix(cwd).split("/") : [];
+    const normalizedParts: ArrayStack<string> = new ArrayStack(() =>
+        cwd !== void 0 && !isAbsolute(path) ? winToPosix(cwd).split("/") : [],
+    );
 
     parts.forEach((part) => {
         if (part === ".") {
             return;
         } else if (part === "..") {
-            if (
-                normalizedParts.length > 0 &&
-                normalizedParts[normalizedParts.length - 1] !== ".."
-            ) {
-                normalizedParts.pop();
-            } else {
-                normalizedParts.push(part);
-            }
+            normalizedParts.popOrPushIf((top) => top !== "..", part);
         } else {
             normalizedParts.push(part);
         }
     });
-    return normalizedParts.join("/");
+    return normalizedParts.collect((parts) => parts.join("/"));
 }
 
 export const getMimetype =
