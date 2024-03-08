@@ -95,7 +95,6 @@ function filterMediaFiles(
 function getCurrentEntryPos(files: readonly string[], file: string): number {
     const current = files.indexOf(file);
     if (current !== -1) {
-        msg.trace(`current file position in files: ${current}`);
         return current;
     } else {
         throw new Error(
