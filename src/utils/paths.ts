@@ -178,7 +178,6 @@ export const getMimetype =
                       `${JSON.stringify(args)} returns: ${str}`,
                   );
               } else {
-                  // @ts-ignore
-                  return mimeType as readonly [string, string];
+                  return mimeType as unknown as readonly [string, string];
               }
           };
