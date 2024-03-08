@@ -5,9 +5,9 @@ function sort<T extends Comparable, U extends Comparable>(
     key?: (arg: T) => U | U[],
 ): void {
     type Mapped = T | U | U[];
+    const mapKey = key !== void 0 ? key : (x: T) => x;
     array.sort((a, b): number => {
-        const [keyA, keyB]: [Mapped, Mapped] =
-            key !== void 0 ? [key(a), key(b)] : [a, b];
+        const [keyA, keyB]: [Mapped, Mapped] = [mapKey(a), mapKey(b)];
         if (Array.isArray(keyA)) {
             if (Array.isArray(keyB)) {
                 for (let i = 0; i < keyA.length && i < keyB.length; i++) {
