@@ -1,4 +1,4 @@
-type Comparable = number | string | Date;
+type Comparable = number | string;
 
 function sort<T extends Comparable, U extends Comparable>(
     array: T[],
