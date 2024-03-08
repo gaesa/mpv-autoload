@@ -1,11 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-export class NoSuchElementError extends Error {
-    constructor(message: string = "No such element exists") {
-        super(message);
-        this.name = "NoSuchElementError";
-    }
-}
+import { NoSuchElementError } from "./errors";
 
 /**
  * An abstract class representing a stack data structure.

@@ -1,3 +1,10 @@
+export class ProcessError extends Error {
+    constructor(message = "Process error occurred") {
+        super(message);
+        this.name = "ProcessError";
+    }
+}
+
 export function run(args: string[], check: boolean = false) {
     const p = mp.command_native({
         args: args,
@@ -11,7 +18,7 @@ export function run(args: string[], check: boolean = false) {
         if (status === 0) {
             return p;
         } else {
-            throw new Error(
+            throw new ProcessError(
                 p.stderr +
                     `Command ${JSON.stringify(
                         args,

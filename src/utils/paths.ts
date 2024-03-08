@@ -8,6 +8,7 @@ import "core-js/es/string/trim-end";
 import * as Processes from "./processes";
 import * as System from "./system";
 import { ArrayStack } from "./collection";
+import { UnexpectedError } from "./errors";
 
 const utils = mp.utils;
 
@@ -127,7 +128,7 @@ export const getMimetype =
               ): readonly [string, string] {
                   if (mimeType.length !== 2) {
                       if (onError === void 0) {
-                          throw new Error(
+                          throw new UnexpectedError(
                               `${JSON.stringify(args)} returns: ${mimeType}`,
                           );
                       } else {
@@ -159,7 +160,7 @@ export const getMimetype =
                       ).stdout.trimEnd();
                       return getCheckedMime(str.split("/", 2), fileArgs);
                   } else {
-                      throw new Error(
+                      throw new UnexpectedError(
                           `${JSON.stringify(fileArgs)} returns: ${str}`,
                       );
                   }
@@ -173,7 +174,9 @@ export const getMimetype =
               const str: string = Processes.run(args, true).stdout.trimEnd();
               const mimeType = str.split("/", 2);
               if (mimeType.length !== 2) {
-                  throw new Error(`${JSON.stringify(args)} returns: ${str}`);
+                  throw new UnexpectedError(
+                      `${JSON.stringify(args)} returns: ${str}`,
+                  );
               } else {
                   // @ts-ignore
                   return mimeType as readonly [string, string];

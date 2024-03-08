@@ -5,6 +5,7 @@ import * as Arrays from "./utils/arrays";
 import * as Asserts from "./utils/asserts";
 import * as Paths from "./utils/paths";
 import * as Sets from "./utils/sets";
+import { NoSuchElementError, UnexpectedError } from "./utils/errors";
 
 const utils = mp.utils;
 const msg = mp.msg;
@@ -75,7 +76,9 @@ function getFiles(dir: string, joinFlag: boolean = false): string[] {
               })
             : files;
     } else {
-        throw new Error(`'utils.readdir' can't get files from ${dir}`);
+        throw new UnexpectedError(
+            `'utils.readdir' can't get files from ${dir}`,
+        );
     }
 }
 
@@ -97,7 +100,7 @@ function getCurrentEntryPos(files: readonly string[], file: string): number {
     if (current !== -1) {
         return current;
     } else {
-        throw new Error(
+        throw new NoSuchElementError(
             "Can't find the position of the currently played file in media files",
         );
     }

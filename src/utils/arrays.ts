@@ -25,7 +25,7 @@ function sort<T extends Comparable, U extends Comparable>(
                     return 1;
                 }
             } else {
-                throw new Error("Can't compare array and non-array");
+                throw new TypeError("Can't compare array and non-array");
             }
         } else {
             if (!Array.isArray(keyB)) {
@@ -37,7 +37,7 @@ function sort<T extends Comparable, U extends Comparable>(
                     return 1;
                 }
             } else {
-                throw new Error("Can't compare array and non-array");
+                throw new TypeError("Can't compare array and non-array");
             }
         }
     });
