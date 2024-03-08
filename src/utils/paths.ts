@@ -25,7 +25,7 @@ export function splitExt(path: string): readonly [string, string] {
 
 export function isDir(file: string): boolean {
     const info = utils.file_info(file);
-    return info === void 0 ? false : info.is_dir;
+    return info != void 0 ? info.is_dir : false;
 }
 
 export function exists(file: string): boolean {
@@ -127,19 +127,19 @@ export const getMimetype =
                   onError?: () => readonly [string, string],
               ): readonly [string, string] {
                   if (mimeType.length !== 2) {
-                      if (onError === void 0) {
+                      if (onError !== void 0) {
+                          return onError();
+                      } else {
                           throw new UnexpectedError(
                               `${JSON.stringify(args)} returns: ${JSON.stringify(mimeType)}`,
                           );
-                      } else {
-                          return onError();
                       }
                   } else {
                       return mimeType as readonly [string, string];
                   }
               }
 
-              const ext = extension === void 0 ? splitExt(file)[1] : extension;
+              const ext = extension !== void 0 ? extension : splitExt(file)[1];
               const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
               const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(ext)
                   ? fileArgs

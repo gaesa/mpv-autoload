@@ -7,7 +7,7 @@ function sort<T extends Comparable, U extends Comparable>(
     type Mapped = T | U | U[];
     array.sort((a, b): number => {
         const [keyA, keyB]: [Mapped, Mapped] =
-            key === void 0 ? [a, b] : [key(a), key(b)];
+            key !== void 0 ? [key(a), key(b)] : [a, b];
         if (Array.isArray(keyA)) {
             if (Array.isArray(keyB)) {
                 for (let i = 0; i < keyA.length && i < keyB.length; i++) {
