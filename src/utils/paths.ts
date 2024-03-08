@@ -129,7 +129,7 @@ export const getMimetype =
                   if (mimeType.length !== 2) {
                       if (onError === void 0) {
                           throw new UnexpectedError(
-                              `${JSON.stringify(args)} returns: ${mimeType}`,
+                              `${JSON.stringify(args)} returns: ${JSON.stringify(mimeType)}`,
                           );
                       } else {
                           return onError();

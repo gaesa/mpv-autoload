@@ -20,9 +20,7 @@ export function run(args: string[], check: boolean = false) {
         } else {
             throw new ProcessError(
                 p.stderr +
-                    `Command ${JSON.stringify(
-                        args,
-                    )} returned non-zero exit status ${JSON.stringify(status)}`,
+                    `Command ${JSON.stringify(args)} returned non-zero exit status ${status}`,
             );
         }
     } else {
