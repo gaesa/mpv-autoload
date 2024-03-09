@@ -120,7 +120,7 @@ export function normalize(path: string, cwd?: string): string {
 
 export const getMimetype =
     mp.get_property("platform") === "linux"
-        ? (file: string, extension: string): readonly [string, string] => {
+        ? (() => {
               function getCheckedMime(
                   mimeType: readonly string[],
                   lengthMismatchHandler: () => readonly [string, string],
@@ -130,38 +130,45 @@ export const getMimetype =
                       : (mimeType as readonly [string, string]);
               }
 
-              const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
-              const args = new Set([".ts", ".bak", ".txt", ".TXT"]).has(
-                  extension,
-              )
-                  ? fileArgs
-                  : [
-                        "xdg-mime",
-                        "query",
-                        "filetype",
-                        file.startsWith("-") ? `./${file}` : file,
-                    ];
+              const extsForFileCmd = new Set([".ts", ".bak", ".txt", ".TXT"]);
+              return (
+                  file: string,
+                  extension: string,
+              ): readonly [string, string] => {
+                  const fileArgs = ["file", "-Lb", "--mime-type", "--", file];
+                  const args = extsForFileCmd.has(extension)
+                      ? fileArgs
+                      : [
+                            "xdg-mime",
+                            "query",
+                            "filetype",
+                            file.startsWith("-") ? `./${file}` : file,
+                        ];
 
-              const str: string = Processes.run(args, true).stdout.trimEnd();
-              const mimeType = str.split("/", 2);
-              return getCheckedMime(mimeType, () => {
-                  if (args[0] === "xdg-mime") {
-                      const str = Processes.run(
-                          fileArgs,
-                          true,
-                      ).stdout.trimEnd();
-                      return getCheckedMime(str.split("/", 2), () => {
+                  const str: string = Processes.run(
+                      args,
+                      true,
+                  ).stdout.trimEnd();
+                  const mimeType = str.split("/", 2);
+                  return getCheckedMime(mimeType, () => {
+                      if (args[0] === "xdg-mime") {
+                          const str = Processes.run(
+                              fileArgs,
+                              true,
+                          ).stdout.trimEnd();
+                          return getCheckedMime(str.split("/", 2), () => {
+                              throw new UnexpectedError(
+                                  `${JSON.stringify(fileArgs)} returns: ${JSON.stringify(mimeType)}`,
+                              );
+                          });
+                      } else {
                           throw new UnexpectedError(
-                              `${JSON.stringify(fileArgs)} returns: ${JSON.stringify(mimeType)}`,
+                              `${JSON.stringify(fileArgs)} returns: ${str}`,
                           );
-                      });
-                  } else {
-                      throw new UnexpectedError(
-                          `${JSON.stringify(fileArgs)} returns: ${str}`,
-                      );
-                  }
-              });
-          }
+                      }
+                  });
+              };
+          })()
         : (file: string, _: string): readonly [string, string] => {
               // `file` command on Windows:
               // https://github.com/julian-r/file-windows
