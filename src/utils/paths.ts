@@ -124,11 +124,11 @@ export const getMimetype =
               function getCheckedMime(
                   mimeType: readonly string[],
                   args: readonly string[],
-                  onError?: () => readonly [string, string],
+                  lengthMismatchHandler?: () => readonly [string, string],
               ): readonly [string, string] {
                   if (mimeType.length !== 2) {
-                      if (onError !== void 0) {
-                          return onError();
+                      if (lengthMismatchHandler !== void 0) {
+                          return lengthMismatchHandler();
                       } else {
                           throw new UnexpectedError(
                               `${JSON.stringify(args)} returns: ${JSON.stringify(mimeType)}`,
