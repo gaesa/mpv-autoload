@@ -102,7 +102,7 @@ export function normalize(path: string, cwd?: string): string {
     const normSep = (path: string) =>
         stripTrailingSlash(winToPosix(path).replace(/\/{2,}/g, "/"));
     const parts = normSep(path).split("/");
-    const normalizedParts: ArrayStack<string> = new ArrayStack(() =>
+    const normalizedParts = new ArrayStack<string>(() =>
         cwd !== void 0 && !isAbsolute(path) ? winToPosix(cwd).split("/") : [],
     );
 
