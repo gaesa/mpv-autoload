@@ -34,6 +34,26 @@ namespace Config {
         new Set(commonAudio),
     );
 
+    export const excludedExts = new Set([
+        ".vtt",
+        ".ass",
+        ".txt",
+        ".py",
+        ".js",
+        ".lua",
+        ".sh",
+        ".bat",
+        ".ps1",
+        ".exe",
+        ".msi",
+        ".bin",
+        ".zip",
+        ".7z",
+        ".rar",
+        "",
+        ".",
+    ]);
+
     export const allowedMimeTypes = new Set(
         Asserts.requireArray(JSON.parse(strOpts.allowedMimeTypes), "string"),
     );
@@ -48,10 +68,14 @@ namespace Config {
 }
 
 function isMedia(file: string): boolean {
-    const ext = Paths.splitExt(file)[1];
-    return Config.commonMedia.has(ext)
-        ? true
-        : Config.allowedMimeTypes.has(Paths.getMimetype(file, ext)[0]);
+    const ext = Paths.splitExt(file)[1].toLowerCase();
+    if (Config.commonMedia.has(ext)) {
+        return true;
+    } else {
+        return Config.excludedExts.has(ext)
+            ? false // since calling external command is expensive
+            : Config.allowedMimeTypes.has(Paths.getMimetype(file, ext)[0]);
+    }
 }
 
 /**
