@@ -45,9 +45,9 @@ Just move `autoload.js` to your mpv `scripts` folder and it will work out of the
 
 ### Customization
 
-You may want to modify some of the default options. Currently, there are three available options: `commonVideo`, `commonAudio`, and `allowedMimeTypes`. The program first uses `commonVideo` and `commonAudio` to filter files in a directory. If a file passes this filter, it is added to the list. If not, the program checks the file’s mimetype. If the mimetype is in `allowedMimeTypes`, the file is also added to the list. Files that do not meet these criteria are not added to the list.
+You may want to modify some of the default options. Currently, there are 5 available options: `commonVideo`, `commonAudio`, `allowedMimeTypes`, `ignoreHidden`, and `sortCaseSensitive`. The program first uses `commonVideo` and `commonAudio` to filter files in a directory. If a file passes this filter, it is added to the list. If not, the program checks whether the file's extension typically represents a non-media file. If it does not, it then checks the file’s mimetype. If the mimetype is in `allowedMimeTypes`, the file is also added to the list. Files that do not meet these criteria are not added to the list.
 
-You can add more extensions to `commonVideo` or `commonAudio` to speed up this process. Alternatively, you can assign an empty array `[]` to `commonAudio` and then assign `["video"]` to `allowedMimeTypes` to disable support for audio files.
+You can add more extensions (they are case-insensitive) to `commonVideo` or `commonAudio` to speed up this process. Alternatively, you can assign an empty array `[]` to `commonAudio` and then assign `["video"]` to `allowedMimeTypes` to disable support for audio files.
 
 Here is the default configuration. You can copy it to `~/.config/mpv/script-opts/autoload.conf` and modify it to suit your needs:
 
