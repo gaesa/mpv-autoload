@@ -13,8 +13,26 @@ const msg = mp.msg;
 namespace Config {
     // mpv only supports boolean, number and string conversions
     const strOpts = {
-        commonVideo: JSON.stringify([".mp4", ".mkv", ".webm"]),
-        commonAudio: JSON.stringify([".mp3", ".flac"]),
+        commonVideo: JSON.stringify([
+            ".flv",
+            ".mkv",
+            ".mov",
+            ".mp4",
+            ".mpeg",
+            ".mpg",
+            ".ogv",
+            ".webm",
+            ".wmv",
+        ]),
+        commonAudio: JSON.stringify([
+            ".flac",
+            ".m4a",
+            ".mp3",
+            ".oga",
+            ".ogg",
+            ".opus",
+            ".wav",
+        ]),
         allowedMimeTypes: JSON.stringify(["video", "audio"]),
         ignoreHidden: JSON.stringify(true),
         sortCaseSensitive: JSON.stringify(true),
