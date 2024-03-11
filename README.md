@@ -83,7 +83,7 @@ With these improvements, `autoload.ts` provides a cleaner, more efficient, and r
 
 The `autoload.ts` script leverages the `getMimetype` function to filter all video and audio files within a directory. It’s important to note that this operation is not recursive. This is because the `mp.utils.readdir` function does not recursively return files.
 
-The `getMimetype` function employs the `mp.command_native` function to call an external command and obtain the precise mime type of each file. As this operation is performed individually for each file, it can take over 3 seconds to return results for a directory containing more than 200 files. (However, by using the mixed method, this task is now completed within 0.04 seconds on Arch Linux if most of files are common media files or command non-media files)
+The `getMimetype` function employs the `mp.command_native` function to call an external command and obtain the precise mime type of each file. As this operation is performed individually for each file, it can take over 3 seconds to return results for a directory containing more than 200 files. (However, by using the mixed method, this task is now completed within 0.04 seconds on Arch Linux if most of files are common media files or common non-media files)
 
 Although mpv offers the `mp.command_native_async` function for asynchronous commands, to utilize it with async/await and restrict concurrency in `mujs`, the JavaScript engine employed by mpv, I have to introduce many polyfills to make my life easier. This adds extra overhead introduced by async/await and significantly increases the file size. Consequently, even occasional usage of external commands can noticeably slow down the entire program.
 
