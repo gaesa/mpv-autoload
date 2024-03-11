@@ -53,8 +53,8 @@ Here is the default configuration. You can copy it to `~/.config/mpv/script-opts
 
 ```
 # It's okay to leave spaces between the elements of the array.
-commonVideo=[".mp4", ".mkv", ".webm"]
-commonAudio=[".mp3", ".flac"]
+commonVideo=[".flv", ".mkv", ".mov", ".mp4", ".mpeg", ".mpg", ".ogv", ".webm", ".wmv"]
+commonAudio=[".flac", ".m4a", ".mp3", ".oga", ".ogg", ".opus", ".wav"]
 
 # The main type (e.g., 'video' in 'video/mp4')
 allowedMimeTypes=["video", "audio"]
