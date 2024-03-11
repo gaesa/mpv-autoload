@@ -45,7 +45,7 @@ Just move `autoload.js` to your mpv `scripts` folder and it will work out of the
 
 ### Customization
 
-You may want to modify some of the default options. Currently, there are 5 available options: `commonVideo`, `commonAudio`, `allowedMimeTypes`, `ignoreHidden`, and `sortCaseSensitive`. The program first uses `commonVideo` and `commonAudio` to filter files in a directory. If a file passes this filter, it is added to the list. If not, the program checks whether the file's extension typically represents a non-media file. If it does not, it then checks the file’s mimetype. If the mimetype is in `allowedMimeTypes`, the file is also added to the list. Files that do not meet these criteria are not added to the list.
+You may want to modify some of the default options. Currently, there are 5 available options: `commonVideo`, `commonAudio`, `allowedMimeTypes`, `ignoreHidden`, and `sortCaseSensitive`. The program first utilizes `commonVideo` and `commonAudio` to filter files in a directory. If a file passes this filter, it is added to the list. If not, the program checks whether the file's extension typically represents a non-media file, such as subtitles, executables, or archives. If it does not, it then examines the file’s mimetype. If the mimetype is in `allowedMimeTypes`, the file is also added to the list. Files that do not meet these criteria are not included in the list.
 
 You can add more extensions (they are case-insensitive) to `commonVideo` or `commonAudio` to speed up this process. Alternatively, you can assign an empty array `[]` to `commonAudio` and then assign `["video"]` to `allowedMimeTypes` to disable support for audio files.
 
