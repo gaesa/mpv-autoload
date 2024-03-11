@@ -12,7 +12,7 @@ const msg = mp.msg;
 
 namespace Config {
     // mpv only supports boolean, number and string conversions
-    const strOpts = {
+    const rawOpts = {
         commonVideo: JSON.stringify([
             ".flv",
             ".mkv",
@@ -37,14 +37,14 @@ namespace Config {
         ignoreHidden: JSON.stringify(true),
         sortCaseSensitive: JSON.stringify(true),
     };
-    mp.options.read_options(strOpts, mp.get_script_name());
+    mp.options.read_options(rawOpts, mp.get_script_name());
 
     const commonVideo = Asserts.requireArray(
-        JSON.parse(strOpts.commonVideo),
+        JSON.parse(rawOpts.commonVideo),
         "string",
     );
     const commonAudio = Asserts.requireArray(
-        JSON.parse(strOpts.commonAudio),
+        JSON.parse(rawOpts.commonAudio),
         "string",
     );
     export const commonMedia = Sets.union(
@@ -73,15 +73,15 @@ namespace Config {
     ]);
 
     export const allowedMimeTypes = new Set(
-        Asserts.requireArray(JSON.parse(strOpts.allowedMimeTypes), "string"),
+        Asserts.requireArray(JSON.parse(rawOpts.allowedMimeTypes), "string"),
     );
 
     export const ignoreHidden = Asserts.requireBoolean(
-        JSON.parse(strOpts.ignoreHidden),
+        JSON.parse(rawOpts.ignoreHidden),
     );
 
     export const sortCaseSensitive = Asserts.requireBoolean(
-        JSON.parse(strOpts.sortCaseSensitive),
+        JSON.parse(rawOpts.sortCaseSensitive),
     );
 }
 
