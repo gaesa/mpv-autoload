@@ -62,12 +62,19 @@ export function split(path: string): readonly [string, string] {
     return [stripTrailingSlash(dir), file];
 }
 
+export function isUNC(path: string): boolean {
+    return path.length > 2 && path.startsWith("\\\\");
+}
+
 /**
  * Converts a Windows-style file path to a POSIX-style file path
  * by replacing backslashes `\` with forward slashes `/`.
  */
 const winToPosix = System.isWindows
-    ? (path: string): string => path.replace(/\\/g, "/")
+    ? (path: string): string =>
+          isUNC(path)
+              ? `\\\\${path.slice(2).replace(/\\/g, "/")}`
+              : path.replace(/\\/g, "/")
     : (path: string) => path;
 
 const isAbsolute = System.isWindows
@@ -103,6 +110,7 @@ export function normalize(path: string, cwd?: string): string {
         stripTrailingSlash(winToPosix(path).replace(/\/{2,}/g, "/"));
     const parts = normSep(path).split("/");
     const normalizedParts = new ArrayStack<string>(() =>
+        // `isAbsolute` already includes UNC paths check
         cwd !== void 0 && !isAbsolute(path) ? winToPosix(cwd).split("/") : [],
     );
 
