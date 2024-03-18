@@ -7,6 +7,11 @@ assignees: ''
 
 ---
 
+### Before Submitting
+
+- [ ] **Read Documentation:** Ensure you've consulted the README or relevant documentation.
+- [ ] **Check Existing Issues:** Verify that a similar issue hasn't already been reported by searching through existing issues.
+
 ### Environment Information
 
 Provide following Information:
