@@ -202,7 +202,7 @@ function main(): void {
         const normalizedPath = Paths.normalize(path, cwd);
 
         const [dir, file] = Paths.split(normalizedPath);
-        const joinFlag = dir === "." ? false : cwd !== dir;
+        const joinFlag = cwd !== dir;
         const accessibleFile = joinFlag ? normalizedPath : file;
 
         const files = Arrays.natsort(
