@@ -3,7 +3,7 @@
 import { NoSuchElementError } from "./errors";
 
 /**
- * An abstract class representing a stack data structure.
+ * An interface representing a stack data structure.
  * @template T - The type of elements stored in the stack.
  */
 export interface Stack<T> {
