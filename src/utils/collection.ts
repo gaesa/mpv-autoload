@@ -6,44 +6,44 @@ import { NoSuchElementError } from "./errors";
  * An abstract class representing a stack data structure.
  * @template T - The type of elements stored in the stack.
  */
-export abstract class Stack<T> {
+export interface Stack<T> {
     /**
      * Pushes an element onto the stack.
      * @param {T} element - The element to push onto the stack.
      */
-    abstract push(element: T): void;
+    push(element: T): void;
 
     /**
      * Pops and returns the top element from the stack.
      * @returns {T} - The popped element.
      * @throws NoSuchElementError if the stack is empty and no default argument is provided.
      */
-    abstract pop(): T;
+    pop(): T;
 
     /**
      * Returns the top element of the stack without removing it.
      * @returns {T} - The top element of the stack.
      * @throws NoSuchElementError if the stack is empty and no default argument is provided.
      */
-    abstract peek(): T;
+    peek(): T;
 
     /**
      * Returns the number of elements in the stack.
      * @returns {number} - The number of elements in the stack.
      */
-    abstract size(): number;
+    size(): number;
 
     /**
      * Checks if the stack is empty.
      * @returns {boolean} - True if the stack is empty, false otherwise.
      */
-    abstract isEmpty(): boolean;
+    isEmpty(): boolean;
 
     /**
      * Returns a string representation of the stack.
      * @returns {string} - A string representation of the stack.
      */
-    abstract toString(): string;
+    toString(): string;
 }
 
 class MissingDefault {}
