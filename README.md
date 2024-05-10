@@ -21,7 +21,7 @@ Ensure `mpv` can access the required dependencies:
 - **Linux:** The `file` and `xdg-mime` executables should be located in a directory listed in your `PATH`.
 - **Other Operating Systems:** The `file` executable should be located in a directory listed in your `PATH`.
 
-For Windows users, you can install `file` using Chocolatey with the command: `choco install file`. Alternatively, you can manually download it from the _Releases_ section of [https://github.com/julian-r/file-windows](https://github.com/julian-r/file-windows), then update `PATH` as necessary.
+For Windows users, you can install `file` by first installing `git` using Chocolatey with the command: `choco install git`. Alternatively, you can manually download `git` from https://git-scm.com/download/win. After that, add `<Git_Installed_Directory>\usr\bin` to your `PATH` as necessary. This will make use of the `file` command that comes with `git`. Please note that installing `file` directly via Chocolatey is not recommended as it cannot handle unicode filenames properly. ([See also for more details](https://yazi-rs.github.io/docs/installation/#requirements))
 
 ## Installation
 
