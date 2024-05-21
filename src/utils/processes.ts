@@ -1,9 +1,8 @@
-export class ProcessError extends Error {
-    constructor(message = "Process error occurred") {
-        super(message);
-        this.name = "ProcessError";
-    }
-}
+import {
+    ProcessExitCodeError,
+    ProcessInitiationError,
+    ProcessInterruptedError,
+} from "./errors";
 
 export function run(args: string[], check: boolean = false) {
     const p = mp.command_native({
@@ -15,13 +14,23 @@ export function run(args: string[], check: boolean = false) {
     });
     if (check) {
         const status = p.status;
-        if (status === 0) {
-            return p;
-        } else {
-            throw new ProcessError(
-                p.stderr +
-                    `Command ${JSON.stringify(args)} returned non-zero exit status ${status}`,
+        if (p.error_string === "init") {
+            throw new ProcessInitiationError(
+                `Failed to initialize ${JSON.stringify(args)}`,
             );
+        } else if (p.error_string == "killed") {
+            throw new ProcessInterruptedError(
+                `Failed to finish ${JSON.stringify(args)}`,
+            );
+        } else {
+            if (status === 0) {
+                return p;
+            } else {
+                throw new ProcessExitCodeError(
+                    p.stderr +
+                        `Command ${JSON.stringify(args)} returned non-zero exit code ${status}`,
+                );
+            }
         }
     } else {
         return p;

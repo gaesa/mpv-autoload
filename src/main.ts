@@ -5,7 +5,11 @@ import * as Arrays from "./utils/arrays";
 import * as Asserts from "./utils/asserts";
 import * as Paths from "./utils/paths";
 import * as Sets from "./utils/sets";
-import { NoSuchElementError, UnexpectedError } from "./utils/errors";
+import {
+    NoSuchElementError,
+    ProcessExitCodeError,
+    UnexpectedError,
+} from "./utils/errors";
 
 const utils = mp.utils;
 const msg = mp.msg;
@@ -90,9 +94,20 @@ function isMedia(file: string): boolean {
     if (Config.commonMedia.has(ext)) {
         return true;
     } else {
-        return Config.excludedExts.has(ext)
-            ? false // since calling external command is expensive
-            : Config.allowedMimeTypes.has(Paths.getMimetype(file, ext)[0]);
+        try {
+            return Config.excludedExts.has(ext)
+                ? false // since calling external command is expensive
+                : Config.allowedMimeTypes.has(Paths.getMimetype(file, ext)[0]);
+        } catch (e) {
+            if (
+                e instanceof ProcessExitCodeError ||
+                e instanceof UnexpectedError
+            ) {
+                return false; // can't determine mime type
+            } else {
+                throw e;
+            }
+        }
     }
 }
 
