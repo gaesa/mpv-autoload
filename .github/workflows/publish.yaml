@@ -56,7 +56,7 @@ jobs:
       - name: Cleanup Old Releases
         uses: dev-drprasad/delete-older-releases@dfbe6be2a006e9475dfcbe5b8d201f1824c2a9fe
         with:
-          keep_latest: 3
+          keep_latest: 10
           delete_tags: true # defaults to false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
