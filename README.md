@@ -32,7 +32,7 @@ For Windows users, you can install `file` by first installing `git` using Chocol
 
 ### Building from source
 
-```shell
+```sh
 git clone https://github.com/gaesa/mpv-autoload
 cd mpv-autoload
 pnpm install --frozen-lockfile && pnpm run build
