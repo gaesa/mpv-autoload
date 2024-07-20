@@ -5,11 +5,7 @@ import * as Arrays from "./utils/arrays";
 import * as Asserts from "./utils/asserts";
 import * as Paths from "./utils/paths";
 import * as Sets from "./utils/sets";
-import {
-    NoSuchElementError,
-    ProcessExitCodeError,
-    UnexpectedError,
-} from "./utils/errors";
+import { ProcessExitCodeError, UnexpectedError } from "./utils/errors";
 
 const utils = mp.utils;
 const msg = mp.msg;
@@ -152,17 +148,6 @@ function filterMediaFiles(
     );
 }
 
-function getCurrentEntryPos(files: readonly string[], file: string): number {
-    const current = files.indexOf(file);
-    if (current !== -1) {
-        return current;
-    } else {
-        throw new NoSuchElementError(
-            "Can't find the position of the currently played file in media files",
-        );
-    }
-}
-
 function addFilesToPlaylist(files: string[], current: number): void {
     files.splice(current, 1);
     files.forEach((file: string) => {
@@ -227,8 +212,10 @@ function main(): void {
         if (files.length === 0) {
             msg.verbose("No media files found in the directory");
         } else {
-            const current = getCurrentEntryPos(files, accessibleFile);
-            addFilesToPlaylist(files, current);
+            const current = files.indexOf(accessibleFile);
+            if (current !== -1) {
+                addFilesToPlaylist(files, current);
+            } // skip non-playable file because it should be handled by users and mpv
         }
     });
 }
