@@ -15,7 +15,7 @@ jobs:
           (startsWith(github.event.head_commit.message, 'refactor') ||
           (startsWith(github.event.head_commit.message, 'fix') && !startsWith(github.event.head_commit.message, 'fixup!')) ||
           startsWith(github.event.head_commit.message, 'feat') ||
-          (startsWith(github.event.head_commit.message, 'chore') && (startsWith(github.event.head_commit.message, 'chore(deps):\ bump core-js') || !startsWith(github.event.head_commit.message, 'chore(dev')) && !startsWith(github.event.head_commit.message, 'chore(github'))) }}
+          (startsWith(github.event.head_commit.message, 'chore') && (startsWith(github.event.head_commit.message, 'chore(deps):\ bump core-js') || !startsWith(github.event.head_commit.message, 'chore(deps')) && !startsWith(github.event.head_commit.message, 'chore(github'))) }}
         uses: action-pack/set-variable@c11848d8c591e9f435e5758b253e4e4fc63eb68d # v1
         with:
           name: "SHOULD_PUBLISH"
