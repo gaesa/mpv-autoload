@@ -105,8 +105,8 @@ function isMedia(file: string): boolean {
              */
             if (e instanceof Error) {
                 if (
-                    e.name == "ProcessExitCodeError" ||
-                    e.name == "UnexpectedError" // `CustomError.name` is `undefined` in this environment
+                    e.name === "ProcessExitCodeError" ||
+                    e.name === "UnexpectedError" // `CustomError.name` is `undefined` in this environment
                 ) {
                     return false; // can't determine mime type
                 } else {
