@@ -5,7 +5,7 @@ import * as Arrays from "./utils/arrays";
 import * as Asserts from "./utils/asserts";
 import * as Paths from "./utils/paths";
 import * as Sets from "./utils/sets";
-import { UnexpectedError } from "./utils/errors";
+import { ProcessInterruptedError, UnexpectedError } from "./utils/errors";
 
 const utils = mp.utils;
 const msg = mp.msg;
@@ -206,29 +206,52 @@ function validatePath(
     }
 }
 
-function main(): void {
-    validatePath(mp.get_property("path"), (path: string) => {
-        const cwd = utils.getcwd();
-        // replace `\` with `/` since `file` command can't handle `\` in path on Windows
-        // remove leading dot to avoid conflict with the `ignoreHidden` feature
-        const normalizedPath = Paths.normalize(path, cwd);
-
-        const [dir, file] = Paths.split(normalizedPath);
-        const joinFlag = cwd !== dir;
-        const accessibleFile = joinFlag ? normalizedPath : file;
-
-        const files = Arrays.natsort(
-            filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
-            Config.sortCaseSensitive,
-        );
-        if (files.length === 0) {
-            msg.verbose("No media files found in the directory");
+function handleProcessKillError(continuation: () => void): void {
+    try {
+        continuation();
+    } catch (e) {
+        if (e instanceof Error) {
+            // use the `name` property instead of `instanceof` due to MuJS limitations
+            if (e.name == "ProcessInterruptedError") {
+                if ((e as ProcessInterruptedError).killedByUs) {
+                    return; // safe to ignore: this error might be due to an early quit of mpv
+                } else {
+                    throw e;
+                }
+            } else {
+                throw e;
+            }
         } else {
-            const current = files.indexOf(accessibleFile);
-            if (current !== -1) {
-                addFilesToPlaylist(files, current);
-            } // skip non-playable file because it should be handled by users and mpv
+            throw e;
         }
+    }
+}
+
+function main(): void {
+    handleProcessKillError(() => {
+        validatePath(mp.get_property("path"), (path: string) => {
+            const cwd = utils.getcwd();
+            // replace `\` with `/` since `file` command can't handle `\` in path on Windows
+            // remove leading dot to avoid conflict with the `ignoreHidden` feature
+            const normalizedPath = Paths.normalize(path, cwd);
+
+            const [dir, file] = Paths.split(normalizedPath);
+            const joinFlag = cwd !== dir;
+            const accessibleFile = joinFlag ? normalizedPath : file;
+
+            const files = Arrays.natsort(
+                filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
+                Config.sortCaseSensitive,
+            );
+            if (files.length === 0) {
+                msg.verbose("No media files found in the directory");
+            } else {
+                const current = files.indexOf(accessibleFile);
+                if (current !== -1) {
+                    addFilesToPlaylist(files, current);
+                } // skip non-playable file because it should be handled by users and mpv
+            }
+        });
     });
 }
 

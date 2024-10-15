@@ -4,7 +4,10 @@ import {
     ProcessInterruptedError,
 } from "./errors";
 
-export function run(args: string[], check: boolean = false) {
+export function run(
+    args: string[],
+    check: boolean = false,
+): mp.CapturedProcess {
     const p = mp.command_native({
         args: args,
         name: "subprocess",
@@ -20,6 +23,7 @@ export function run(args: string[], check: boolean = false) {
             );
         } else if (p.error_string == "killed") {
             throw new ProcessInterruptedError(
+                p.killed_by_us,
                 `Failed to finish ${JSON.stringify(args)}`,
             );
         } else {

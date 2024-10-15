@@ -27,8 +27,14 @@ export class ProcessInitiationError extends Error {
 }
 
 export class ProcessInterruptedError extends Error {
-    constructor(message: string = "Process was interrupted") {
+    killedByUs: boolean;
+
+    constructor(
+        killedByUs: boolean,
+        message: string = "Process was interrupted",
+    ) {
         super(message);
         this.name = "ProcessInterruptedError";
+        this.killedByUs = killedByUs;
     }
 }
