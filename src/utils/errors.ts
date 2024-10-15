@@ -6,28 +6,28 @@ export class NoSuchElementError extends Error {
 }
 
 export class UnexpectedError extends Error {
-    constructor(message = "An unexpected error occurred") {
+    constructor(message: string = "An unexpected error occurred") {
         super(message);
         this.name = "UnexpectedError";
     }
 }
 
 export class ProcessExitCodeError extends Error {
-    constructor(message = "Process return non-zero exit code") {
+    constructor(message: string = "Process return non-zero exit code") {
         super(message);
         this.name = "ProcessExitCodeError";
     }
 }
 
 export class ProcessInitiationError extends Error {
-    constructor(message = "Process failed to initialize") {
+    constructor(message: string = "Process failed to initialize") {
         super(message);
         this.name = "ProcessInitiationError";
     }
 }
 
 export class ProcessInterruptedError extends Error {
-    constructor(message = "Process was interrupted") {
+    constructor(message: string = "Process was interrupted") {
         super(message);
         this.name = "ProcessInterruptedError";
     }
