@@ -5,7 +5,7 @@ import * as Arrays from "./utils/arrays";
 import * as Asserts from "./utils/asserts";
 import * as Paths from "./utils/paths";
 import * as Sets from "./utils/sets";
-import { ProcessExitCodeError, UnexpectedError } from "./utils/errors";
+import { UnexpectedError } from "./utils/errors";
 
 const utils = mp.utils;
 const msg = mp.msg;
@@ -95,11 +95,23 @@ function isMedia(file: string): boolean {
                 ? false // since calling external command is expensive
                 : Config.allowedMimeTypes.has(Paths.getMimetype(file, ext)[0]);
         } catch (e) {
-            if (
-                e instanceof ProcessExitCodeError ||
-                e instanceof UnexpectedError
-            ) {
-                return false; // can't determine mime type
+            /*
+             * Avoid `instanceof` for custom error checks because:
+             *
+             * 1. Compatibility: In some environments (e.g., MuJS), `instanceof` may fail for custom errors.
+             * 2. Prototype Issues: Lightweight engines might not fully support prototype chains, leading to hard-to-trace bugs.
+             *
+             * Instead, use the `name` property for consistent behavior and safe re-throwing of errors.
+             */
+            if (e instanceof Error) {
+                if (
+                    e.name == "ProcessExitCodeError" ||
+                    e.name == "UnexpectedError" // `CustomError.name` is `undefined` in this environment
+                ) {
+                    return false; // can't determine mime type
+                } else {
+                    throw e;
+                }
             } else {
                 throw e;
             }
