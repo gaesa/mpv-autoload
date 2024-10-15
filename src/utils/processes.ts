@@ -21,7 +21,7 @@ export function run(
             throw new ProcessInitiationError(
                 `Failed to initialize ${JSON.stringify(args)}`,
             );
-        } else if (p.error_string == "killed") {
+        } else if (p.error_string === "killed") {
             throw new ProcessInterruptedError(
                 p.killed_by_us,
                 `Failed to finish ${JSON.stringify(args)}`,

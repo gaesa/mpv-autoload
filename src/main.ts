@@ -212,7 +212,7 @@ function handleProcessKillError(continuation: () => void): void {
     } catch (e) {
         if (e instanceof Error) {
             // use the `name` property instead of `instanceof` due to MuJS limitations
-            if (e.name == "ProcessInterruptedError") {
+            if (e.name === "ProcessInterruptedError") {
                 if ((e as ProcessInterruptedError).killedByUs) {
                     return; // safe to ignore: this error might be due to an early quit of mpv
                 } else {
