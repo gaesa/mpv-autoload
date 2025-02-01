@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "core-js": "^3.39.0"
+    "core-js": "^3.40.0"
   },
   "scripts": {
     "build:webpack": "webpack",
