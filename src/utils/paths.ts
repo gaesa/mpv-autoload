@@ -138,7 +138,13 @@ export const getMimetype =
                       : (mimeType as readonly [string, string]);
               }
 
-              const extsForFileCmd = new Set([".ts", ".bak", ".txt", ".TXT"]);
+              const extsForFileCmd = new Set([
+                  ".ts",
+                  ".bak",
+                  ".mod",
+                  ".txt",
+                  ".TXT",
+              ]);
               return (
                   file: string,
                   extension: string,
