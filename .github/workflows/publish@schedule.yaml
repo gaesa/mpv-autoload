@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - if: ${{ vars.SHOULD_PUBLISH == 'true' }}
-        uses: action-pack/set-variable@7e83925d7208bd6cb661b4fbc466df673bbae825 # v1
+        uses: action-pack/set-variable@54de69c1565d1c9de606af2f1406814aa5d7551c # v1
         with:
           name: "SHOULD_PUBLISH"
           value: "false"
