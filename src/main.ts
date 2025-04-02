@@ -103,15 +103,12 @@ function isMedia(file: string): boolean {
              *
              * Instead, use the `name` property for consistent behavior and safe re-throwing of errors.
              */
-            if (e instanceof Error) {
-                if (
-                    e.name === "ProcessExitCodeError" ||
-                    e.name === "UnexpectedError" // `CustomError.name` is `undefined` in this environment
-                ) {
-                    return false; // can't determine mime type
-                } else {
-                    throw e;
-                }
+            if (
+                e instanceof Error &&
+                (e.name === "ProcessExitCodeError" ||
+                    e.name === "UnexpectedError") // `CustomError.name` is `undefined` in this environment
+            ) {
+                return false; // can't determine mime type
             } else {
                 throw e;
             }
@@ -210,17 +207,13 @@ function handleProcessKillError(continuation: () => void): void {
     try {
         continuation();
     } catch (e) {
-        if (e instanceof Error) {
+        if (
+            e instanceof Error &&
             // use the `name` property instead of `instanceof` due to MuJS limitations
-            if (e.name === "ProcessInterruptedError") {
-                if ((e as ProcessInterruptedError).killedByUs) {
-                    return; // safe to ignore: this error might be due to an early quit of mpv
-                } else {
-                    throw e;
-                }
-            } else {
-                throw e;
-            }
+            e.name === "ProcessInterruptedError" &&
+            (e as ProcessInterruptedError).killedByUs
+        ) {
+            return; // safe to ignore: this error might be due to an early quit of mpv
         } else {
             throw e;
         }
