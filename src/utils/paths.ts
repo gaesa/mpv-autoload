@@ -15,7 +15,7 @@ const utils = mp.utils;
 export function splitExt(path: string): readonly [string, string] {
     const [dir, file] = utils.split_path(path);
     const lastDotIndex = file.lastIndexOf(".");
-    return lastDotIndex === 0
+    return lastDotIndex === -1 || lastDotIndex === 0
         ? [path, ""]
         : [
               utils.join_path(dir, file.slice(0, lastDotIndex)),
