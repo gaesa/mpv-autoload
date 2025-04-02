@@ -159,7 +159,9 @@ function filterMediaFiles(
 
 function addFilesToPlaylist(files: string[], current: number): void {
     files.splice(current, 1);
-    files.forEach((file: string) => {
+    // https://github.com/prettier/prettier/issues/807
+    // prettier-ignore
+    files.forEach((file: string) => { // <-: usually the performance bottleneck
         mp.command_native(["loadfile", file, "append"]);
     });
     mp.command_native(["playlist-move", 0, current + 1]);
