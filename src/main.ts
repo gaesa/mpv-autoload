@@ -86,7 +86,7 @@ namespace Config {
 }
 
 function isMedia(file: string): boolean {
-    const ext = Paths.splitExt(file)[1].toLowerCase();
+    const ext = Paths.getExtension(file).toLowerCase();
     if (Config.commonMedia.has(ext)) {
         return true;
     } else {

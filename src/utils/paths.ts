@@ -12,15 +12,12 @@ import { UnexpectedError } from "./errors";
 
 const utils = mp.utils;
 
-export function splitExt(path: string): readonly [string, string] {
-    const [dir, file] = utils.split_path(path);
+export function getExtension(path: string): string {
+    const [_, file] = utils.split_path(path);
     const lastDotIndex = file.lastIndexOf(".");
     return lastDotIndex === -1 || lastDotIndex === 0
-        ? [path, ""]
-        : [
-              utils.join_path(dir, file.slice(0, lastDotIndex)),
-              file.slice(lastDotIndex),
-          ];
+        ? ""
+        : file.slice(lastDotIndex);
 }
 
 export function isDir(file: string): boolean {
