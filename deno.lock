@@ -3,7 +3,6 @@
   "specifiers": {
     "npm:@types/deno@^2.2.0": "2.2.0",
     "npm:@types/mpv-script@~0.32.8": "0.32.8",
-    "npm:core-js@^3.39.0": "3.41.0",
     "npm:ts-loader@^9.5.2": "9.5.2_typescript@5.8.2_webpack@5.98.0",
     "npm:webpack-bundle-analyzer@^4.10.2": "4.10.2",
     "npm:webpack-cli@^6.0.1": "6.0.1_webpack@5.98.0",
@@ -306,9 +305,6 @@
     },
     "commander@7.2.0": {
       "integrity": "sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw=="
-    },
-    "core-js@3.41.0": {
-      "integrity": "sha512-SJ4/EHwS36QMJd6h/Rg+GyR4A5xE0FSI3eZ+iBVpfqf1x0eTSg1smWLHrA+2jQThZSh97fmSgFSU8B61nxosxA=="
     },
     "cross-spawn@7.0.6": {
       "integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
@@ -845,7 +841,7 @@
       "dependencies": [
         "npm:@types/deno@^2.2.0",
         "npm:@types/mpv-script@~0.32.8",
-        "npm:core-js@^3.39.0",
+        "npm:core-js@^3.41.0",
         "npm:ts-loader@^9.5.2",
         "npm:webpack-bundle-analyzer@^4.10.2",
         "npm:webpack-cli@^6.0.1",
