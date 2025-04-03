@@ -1,0 +1,6 @@
+{
+  "vendor": true,
+  "imports": {
+    "https://deno.land/std/assert/assert_equals.ts": "./vendor/deno.land/std@0.224.0/assert/assert_equals.ts"
+  }
+}
