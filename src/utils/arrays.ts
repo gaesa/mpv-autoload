@@ -1,71 +1,253 @@
-type Comparable = number | string;
+type Ordering = -1 | 0 | 1;
 
-function sort<T extends Comparable, U extends Comparable>(
-    array: T[],
-    key?: (arg: T) => U | U[],
-): void {
-    type Mapped = T | U | U[];
-    const mapKey = key !== void 0 ? key : (x: T) => x;
-    array.sort((a, b): number => {
-        const [keyA, keyB]: [Mapped, Mapped] = [mapKey(a), mapKey(b)];
-        if (Array.isArray(keyA)) {
-            if (Array.isArray(keyB)) {
-                for (let i = 0; i < keyA.length && i < keyB.length; i++) {
-                    if (keyA[i] < keyB[i]) {
-                        return -1;
-                    } else if (keyA[i] > keyB[i]) {
-                        return 1;
-                    }
-                }
-                if (keyA.length < keyB.length) {
-                    return -1;
-                } else if (keyA.length === keyB.length) {
-                    return 0;
-                } else {
-                    return 1;
-                }
+/**
+ * Find the first non-zero character in `slice`, skipping over leading zeros.
+ *
+ * @param index - The starting index to check.
+ *
+ * @param startingChar - The first character in the `slice` (must be `slice[index]`),
+ *                       it is used to avoid redundant indexing operations for the first character.
+ *
+ * @param slice - The full string being processed.
+ *
+ * @returns The index of the first non-zero character, or the length of `slice` if none found.
+ *
+ * @note If `startingChar === "0"`, it continues skipping zeros until it reaches:
+ * - a non-zero character, which *typically* marks the start of a number.
+ * - The end of `slice`.
+ */
+function getFirstNonZeroChar(
+    index: number,
+    startingChar: string,
+    slice: string,
+): number {
+    let i = index;
+    if (startingChar === "0") {
+        i += 1; // skip the first zero since it's already checked by the above line
+
+        const len = slice.length;
+        while (i < len) {
+            if (slice[i] === "0") {
+                i += 1;
             } else {
-                throw new TypeError("Can't compare array and non-array");
-            }
-        } else {
-            if (!Array.isArray(keyB)) {
-                if (keyA < keyB) {
-                    return -1;
-                } else if (keyA === keyB) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            } else {
-                throw new TypeError("Can't compare array and non-array");
+                return i;
             }
         }
-    });
+    }
+    return i;
 }
 
+/**
+ * Check whether a character is an ASCII digit ('0'-'9').
+ *
+ * @param c - The character to check.
+ *
+ * @returns `true` if `s` is a digit, otherwise `false`.
+ *
+ * @note This function assumes `s` is a single-character string.
+ *       If `s` contains more than one character, the behavior is undefined.
+ */
+function isAsciiDigit(c: string): boolean {
+    return "0" <= c && c <= "9";
+}
+
+/**
+ * Compare two single characters lexicographically.
+ *
+ * @param s1 - The first character.
+ * @param s2 - The second character.
+ *
+ * @returns `-1` if `s1 < s2`, `0` if `s1 === s2`, and `1` if `s1 > s2`.
+ *
+ * @note This function assumes both `s1` and `s2` are strings of length 1.
+ *       It does not enforce this constraint at runtime.
+ *
+ * @example
+ * cmpChar("a", "b"); // -1
+ * cmpChar("z", "z"); // 0
+ * cmpChar("9", "5"); // 1
+ */
+function cmpChar(s1: string, s2: string): Ordering {
+    if (s1 < s2) {
+        return -1;
+    } else if (s1 === s2) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+/**
+ * Compare numeric substrings found within `s1` and `s2`, starting at `index1` and `index2`.
+ *
+ * It scans through `s1` and `s2`, starting at `index1` and `index2`,
+ * and compares their numerical segments until it reaches a non-digit character or the end of a string.
+ *
+ * @param s1 - The first string to compare.
+ * @param s2 - The second string to compare.
+ * @param index1 - A reference to the current position in `s1`.
+ * @param index2 - A reference to the current position in `s2`.
+ *
+ * @returns `Ordering` value (`-1`, `0`, or `1`) indicating the sorting order.
+ *
+ * @note
+ * - The caller **must** ensure that `s1[index1..]` and `s2[index2..]` are *potential* numeric sections.
+ * - Since `getFirstNonZeroChar` may stop at a non-digit character,
+ *   `compareNumericParts` must still check whether the characters at the initial indices are digits.
+ * - Skipping the initial index check here would break modularity,
+ *   making the responsibilities of this function and `getFirstNonZeroChar` unclear.
+ * - It is the caller’s responsibility to ensure that neither number has a leading zero.
+ */
+function compareNumericParts(
+    s1: string,
+    s2: string,
+    index1: [number],
+    index2: [number],
+): Ordering {
+    let prevOrd: Ordering = 0;
+    let i1 = index1[0];
+    let i2 = index2[0];
+    const s1_len = s1.length;
+    const s2_len = s2.length;
+
+    while (true) {
+        const c1_is_some = i1 < s1_len;
+        const c2_is_some = i2 < s2_len;
+        const c1 = c1_is_some ? s1[i1] : null;
+        const c2 = c2_is_some ? s2[i2] : null;
+        const c1_is_some_and_is_digit = c1_is_some
+            ? isAsciiDigit(c1 as string)
+            : false;
+        const c2_is_some_and_is_digit = c2_is_some
+            ? isAsciiDigit(c2 as string)
+            : false;
+
+        if (c1_is_some_and_is_digit) {
+            // `(true, true)`
+            if (c2_is_some_and_is_digit) {
+                // to avoid subsequent modification because a more significant digit takes priority
+                if (prevOrd === 0) {
+                    // SAFETY: `c1` and `c2` are immutable and have already passed the `is_some` checks
+                    prevOrd = cmpChar(c1 as string, c2 as string);
+                }
+                i1 += 1;
+                i2 += 1;
+            } else {
+                // `(true, false)`
+                index1[0] = i1;
+                index2[0] = i2;
+                return 1; // handle numbers with different lengths
+            }
+        } else {
+            // `(false, true)`
+            if (c2_is_some_and_is_digit) {
+                index1[0] = i1;
+                index2[0] = i2;
+                return -1; // because a shorter number is smaller
+            } else {
+                // `(false, false)`
+                // No more consecutive digits in either side.
+                // Only if the numbers have the same length does `prevOrd` determine the result.
+                index1[0] = i1;
+                index2[0] = i2;
+                return prevOrd;
+            }
+        }
+    }
+}
+
+/**
+ * Compare two strings using natural sorting order.
+ *
+ * - Numbers are compared as whole numbers, ignoring leading zeros.
+ * - Non-digit characters are compared using the `cmpNonDigit` function.
+ *
+ * This implementation is tested to match KDE Dolphin's natural sorting behavior.
+ *
+ * @param s1 - The first string to compare.
+ * @param s2 - The second string to compare.
+ * @param cmpNonDigit - A function used to compare characters when either is a non-digit character.
+ *
+ * @returns An `Ordering` value (`-1`, `0`, or `1`) indicating the relative natural order between `s1` and `s2`.
+ *
+ * @example
+ * naturalCompare("file1", "file2", cmpChar); // -1
+ * naturalCompare("file10", "file2", cmpChar); // 1
+ * naturalCompare("image9", "image09", cmpChar); // 0
+ */
+function naturalCompare(
+    s1: string,
+    s2: string,
+    cmpNonDigit: (a: string, b: string) => Ordering,
+): Ordering {
+    let index1 = 0;
+    let index2 = 0;
+    const indexP1: [number] = [0];
+    const indexP2: [number] = [0];
+    const s1_len = s1.length;
+    const s2_len = s2.length;
+    while (true) {
+        if (index1 < s1_len) {
+            // (Some(c1), Some(c2))
+            if (index2 < s2_len) {
+                const c1 = s1[index1];
+                const c2 = s2[index2];
+                if (isAsciiDigit(c1) && isAsciiDigit(c2)) {
+                    indexP1[0] = getFirstNonZeroChar(index1, c1, s1);
+                    indexP2[0] = getFirstNonZeroChar(index2, c2, s2);
+                    const numOrd = compareNumericParts(
+                        s1,
+                        s2,
+                        indexP1,
+                        indexP2,
+                    );
+                    if (numOrd == 0) {
+                        index1 = indexP1[0];
+                        index2 = indexP2[0];
+                    } else {
+                        return numOrd;
+                    }
+                } else {
+                    const nonNumOrd = cmpNonDigit(c1, c2);
+                    if (nonNumOrd != 0) {
+                        return nonNumOrd;
+                    } else {
+                        index1 += 1;
+                        index2 += 1;
+                        indexP1[0] = index1;
+                        indexP2[0] = index2;
+                    }
+                }
+            } else {
+                // (Some(_), None)
+                return 1; // longer means larger
+            }
+        } else {
+            // (None, Some(_))
+            if (index2 < s2_len) {
+                return -1; // shorter means smaller
+            } else {
+                // (None, None)
+                return 0; // fully compared without finding inequality
+            }
+        }
+    }
+}
+
+/**
+ * Sort an array of strings using natural sorting order.
+ *
+ * @param strings - The array of strings to sort.
+ * @param caseSensitive - Whether to use case-sensitive comparison (default: `true`).
+ * @returns A sorted array of strings.
+ */
 export function natsort(
     strings: string[],
     caseSensitive: boolean = true,
 ): string[] {
-    function isDigit(n: string) {
-        return /^\d+$/.test(n);
-    }
-
-    const split = caseSensitive
-        ? (s: string) => s.split(/(\d+)/)
-        : (s: string) => s.toLowerCase().split(/(\d+)/);
-
-    function key(s: string) {
-        const splitArr = split(s);
-        splitArr[0] === "" ? splitArr.shift() : void 0;
-        splitArr.length > 0 && splitArr[splitArr.length - 1] === ""
-            ? splitArr.pop()
-            : void 0;
-        return splitArr.map((text: string) =>
-            isDigit(text) ? parseInt(text, 10) : text,
-        );
-    }
-
-    sort(strings, key);
+    let cmpNonDigit = caseSensitive
+        ? cmpChar
+        : (a: string, b: string) => cmpChar(a.toLowerCase(), b.toLowerCase());
+    strings.sort((a, b) => naturalCompare(a, b, cmpNonDigit));
     return strings;
 }
