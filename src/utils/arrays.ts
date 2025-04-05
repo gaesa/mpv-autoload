@@ -157,16 +157,16 @@ function compareNumericParts(
 }
 
 /**
- * Compares two strings using natural sorting order.
+ * Compares two strings using natural sorting order, without creating intermediate number buffers.
  *
- * - Numbers are compared as whole numbers, ignoring leading zeros.
+ * - Numeric sequences are compared as whole numbers, ignoring leading zeros.
  * - Non-digit characters are compared using the `cmpNonDigit` function.
  *
  * This implementation is tested to match KDE Dolphin's natural sorting behavior.
  *
  * @param s1 - The first string to compare.
  * @param s2 - The second string to compare.
- * @param cmpNonDigit - A function used to compare characters when either is a non-digit character.
+ * @param cmpNonDigit - The function used to compare characters when either is a non-digit character.
  *
  * @returns An `Ordering` value (`-1`, `0`, or `1`) indicating the relative natural order between `s1` and `s2`.
  *
@@ -235,11 +235,11 @@ function naturalCompare(
 }
 
 /**
- * Sorts an array of strings using natural sorting order.
+ * Sorts an array of strings in place using natural sorting order.
  *
  * @param strings - The array of strings to sort.
  * @param caseSensitive - Whether to use case-sensitive comparison (default: `true`).
- * @returns A sorted array of strings.
+ * @returns The sorted array of strings.
  */
 export function natsort(
     strings: string[],
