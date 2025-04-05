@@ -117,7 +117,7 @@ function isMedia(file: string): boolean {
 }
 
 /**
- * Get files from a given directory, join directory and files as necessary
+ * Gets files from a given directory, join directory and files as necessary
  *
  * Note: The current implementation utilizes `mp.utils.join_path`,
  * which would result in paths containing `/` even on Windows.

@@ -1,7 +1,7 @@
 type Ordering = -1 | 0 | 1;
 
 /**
- * Find the first non-zero character in `slice`, skipping over leading zeros.
+ * Finds the first non-zero character in `slice`, skipping over leading zeros.
  *
  * @param index - The starting index to check.
  *
@@ -38,7 +38,7 @@ function getFirstNonZeroChar(
 }
 
 /**
- * Check whether a character is an ASCII digit ('0'-'9').
+ * Checks whether a character is an ASCII digit ('0'-'9').
  *
  * @param c - The character to check.
  *
@@ -52,7 +52,7 @@ function isAsciiDigit(c: string): boolean {
 }
 
 /**
- * Compare two single characters lexicographically.
+ * Compares two single characters lexicographically.
  *
  * @param s1 - The first character.
  * @param s2 - The second character.
@@ -78,7 +78,7 @@ function cmpChar(s1: string, s2: string): Ordering {
 }
 
 /**
- * Compare numeric substrings found within `s1` and `s2`, starting at `index1` and `index2`.
+ * Compares numeric substrings found within `s1` and `s2`, starting at `index1` and `index2`.
  *
  * It scans through `s1` and `s2`, starting at `index1` and `index2`,
  * and compares their numerical segments until it reaches a non-digit character or the end of a string.
@@ -157,7 +157,7 @@ function compareNumericParts(
 }
 
 /**
- * Compare two strings using natural sorting order.
+ * Compares two strings using natural sorting order.
  *
  * - Numbers are compared as whole numbers, ignoring leading zeros.
  * - Non-digit characters are compared using the `cmpNonDigit` function.
@@ -235,7 +235,7 @@ function naturalCompare(
 }
 
 /**
- * Sort an array of strings using natural sorting order.
+ * Sorts an array of strings using natural sorting order.
  *
  * @param strings - The array of strings to sort.
  * @param caseSensitive - Whether to use case-sensitive comparison (default: `true`).
