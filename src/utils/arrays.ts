@@ -23,12 +23,11 @@ function getFirstNonZeroChar(
 ): number {
     let i = index;
     if (startingChar === "0") {
-        i += 1; // skip the first zero since it's already checked by the above line
-
         const len = slice.length;
-        while (i < len) {
-            if (slice[i] === "0") {
-                i += 1;
+        while (true) {
+            i += 1; // skip the first zero since it's already checked
+            if (i < len && slice[i] === "0") {
+                continue;
             } else {
                 return i;
             }
