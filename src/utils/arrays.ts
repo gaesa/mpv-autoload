@@ -154,6 +154,9 @@ function compareNumericParts(
  *
  * - Numeric sequences are compared as whole numbers, ignoring leading zeros.
  * - Non-digit characters are compared using the `cmpNonDigit` function.
+ * - Whitespace characters (including spaces) are treated as ordinary bytes;
+ *   this matches the behavior of major file managers like KDE Dolphin and Windows Explorer,
+ *   and avoids introducing ambiguity or performance overhead.
  *
  * This implementation is tested to match KDE Dolphin's natural sorting behavior.
  *
@@ -238,6 +241,11 @@ function naturalCompare(
  * @param strings - The array of strings to sort.
  * @param caseSensitive - Whether to use case-sensitive comparison (default: `true`).
  * @returns The sorted array of strings.
+ *
+ * @remarks
+ * Whitespace characters (such as spaces) are not specially treated,
+ * as there is no consistent definition of what should be considered a "space",
+ * and handling them specially offers no clear benefit in real-world usage.
  */
 export function naturalSort(
     strings: string[],
