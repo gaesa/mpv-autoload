@@ -71,10 +71,18 @@ function cmpChar(s1: string, s2: string): Ordering {
 }
 
 /**
- * Compares numeric substrings found within `s1` and `s2`, starting at `index1` and `index2`.
+ * Compares the **single pair** of numeric sections from two character slices (`s1` and `s2`),
+ * starting at `index1` and `index2`.
  *
- * It scans through `s1` and `s2`, starting at `index1` and `index2`,
- * and compares their numerical segments until it reaches a non-digit character or the end of a string.
+ * The function compares the numeric values of `s1` and `s2` character-by-character until it reaches:
+ * - a non-digit char, or
+ * - the end of either slice.
+ *
+ * It handles both:
+ * - **Different lengths**: The slice with more digits is considered larger.
+ * - **Same length**: The comparison continues until a difference is found.
+ *   If no difference is found, the last comparison result (based on the most significant unequal
+ *   character) is returned.
  *
  * @param s1 - The first string to compare.
  * @param s2 - The second string to compare.
@@ -85,11 +93,12 @@ function cmpChar(s1: string, s2: string): Ordering {
  *
  * @remarks
  * - The caller **must** ensure that `s1[index1..]` and `s2[index2..]` are *potential* numeric sections.
- * - Since `getFirstNonZeroChar` may stop at a non-digit character,
- *   `compareNumericParts` must still check whether the characters at the initial indices are digits.
- * - Skipping the initial index check here would break modularity,
- *   making the responsibilities of this function and `getFirstNonZeroChar` unclear.
+ *   This simplifies branching logic and improves performance at the cost of elegance.
  * - It is the caller’s responsibility to ensure that neither number has a leading zero.
+ * - It still performs digit checks at the starting indices,
+ *   because `getFirstNonZeroChar` may land on a non-digit character.
+ * - Skipping the initial digit check here may seem cleaner, but would result in higher overhead elsewhere,
+ *   negating the performance benefits of the current structure.
  */
 function compareNumericParts(
     s1: string,
@@ -109,7 +118,8 @@ function compareNumericParts(
         const c1: string | undefined = s1[i1];
         const c2: string | undefined = s2[i2];
         const c1_is_some_and_is_digit = c1_is_some
-            ? isAsciiDigit(c1 as string)
+            ? // SAFETY: `c1` and `c2` are immutable and have already passed the `is_some` checks
+              isAsciiDigit(c1 as string)
             : false;
         const c2_is_some_and_is_digit = c2_is_some
             ? isAsciiDigit(c2 as string)
@@ -121,6 +131,9 @@ function compareNumericParts(
                 // to avoid subsequent modification because a more significant digit takes priority
                 if (prevOrd === 0) {
                     // SAFETY: `c1` and `c2` are immutable and have already passed the `is_some` checks
+                    // REASON: Removing these `as` by refactoring would require additional branching and code,
+                    //         which not only fails to improve performance but may also
+                    //         introduce instability due to increased complexity in hot paths.
                     prevOrd = cmpChar(c1 as string, c2 as string);
                 }
                 i1 += 1;
