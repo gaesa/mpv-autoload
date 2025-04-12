@@ -206,12 +206,12 @@ function naturalCompare(
                         index1 = indexP1[0];
                         index2 = indexP2[0];
                     } else {
-                        return numOrd;
+                        return numOrd; // return when unequal (`Ordering::Less` or `Ordering::Greater`)
                     }
                 } else {
                     const nonNumOrd = cmpNonDigit(c1, c2);
                     if (nonNumOrd != 0) {
-                        return nonNumOrd;
+                        return nonNumOrd; // return when unequal (`Ordering::Less` or `Ordering::Greater`)
                     } else {
                         index1 += 1;
                         index2 += 1;
