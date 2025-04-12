@@ -106,8 +106,8 @@ function compareNumericParts(
     while (true) {
         const c1_is_some = i1 < s1_len;
         const c2_is_some = i2 < s2_len;
-        const c1 = c1_is_some ? s1[i1] : null;
-        const c2 = c2_is_some ? s2[i2] : null;
+        const c1: string | undefined = s1[i1];
+        const c2: string | undefined = s2[i2];
         const c1_is_some_and_is_digit = c1_is_some
             ? isAsciiDigit(c1 as string)
             : false;
