@@ -37,8 +37,8 @@ function getFirstNonZeroChar(index: number, slice: string): number {
  *
  * @returns `true` if `s` is a digit, otherwise `false`.
  *
- * @note This function assumes `s` is a single-character string.
- *       If `s` contains more than one character, the behavior is undefined.
+ * @remarks This function assumes `s` is a single-character string.
+ *          If `s` contains more than one character, the behavior is undefined.
  */
 function isAsciiDigit(c: string): boolean {
     return "0" <= c && c <= "9";
@@ -52,8 +52,8 @@ function isAsciiDigit(c: string): boolean {
  *
  * @returns `-1` if `s1 < s2`, `0` if `s1 === s2`, and `1` if `s1 > s2`.
  *
- * @note This function assumes both `s1` and `s2` are strings of length 1.
- *       It does not enforce this constraint at runtime.
+ * @remarks This function assumes both `s1` and `s2` are strings of length 1.
+ *          It does not enforce this constraint at runtime.
  *
  * @example
  * cmpChar("a", "b"); // -1
@@ -83,7 +83,7 @@ function cmpChar(s1: string, s2: string): Ordering {
  *
  * @returns `Ordering` value (`-1`, `0`, or `1`) indicating the sorting order.
  *
- * @note
+ * @remarks
  * - The caller **must** ensure that `s1[index1..]` and `s2[index2..]` are *potential* numeric sections.
  * - Since `getFirstNonZeroChar` may stop at a non-digit character,
  *   `compareNumericParts` must still check whether the characters at the initial indices are digits.
