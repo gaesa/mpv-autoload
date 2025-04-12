@@ -240,7 +240,7 @@ function naturalCompare(
  * @param caseSensitive - Whether to use case-sensitive comparison (default: `true`).
  * @returns The sorted array of strings.
  */
-export function natsort(
+export function naturalSort(
     strings: string[],
     caseSensitive: boolean = true,
 ): string[] {

@@ -1,9 +1,9 @@
-import { natsort } from "./arrays.ts";
+import { naturalSort } from "./arrays.ts";
 import { assertEquals } from "../../vendor/deno.land/std@0.224.0/assert/assert_equals.ts";
 
 function check(expected: string[]) {
     let actual = expected.slice();
-    assertEquals(natsort(actual, true), expected);
+    assertEquals(naturalSort(actual, true), expected);
 }
 
 Deno.test("test_dates", () => {

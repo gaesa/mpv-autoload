@@ -234,7 +234,7 @@ function main(): void {
             const joinFlag = cwd !== dir;
             const accessibleFile = joinFlag ? normalizedPath : file;
 
-            const files = Arrays.natsort(
+            const files = Arrays.naturalSort(
                 filterMediaFiles(getFiles(dir, joinFlag), Config.ignoreHidden),
                 Config.sortCaseSensitive,
             );
