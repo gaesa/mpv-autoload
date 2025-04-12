@@ -157,6 +157,13 @@ function filterMediaFiles(
     );
 }
 
+/**
+ * Designed to reduce `loadfile` and `playlist-move` calls to the minimal necessary set.
+ * Still performs significantly worse than Lua version, possibly due to:
+ * - MuJS’s interpreter overhead,
+ * - JS→C boundary costs (e.g. string encoding, allocation),
+ * - lack of JIT or efficient FFI in JS bindings.
+ */
 function addFilesToPlaylist(files: string[], current: number): void {
     files.splice(current, 1);
     // https://github.com/prettier/prettier/issues/807
