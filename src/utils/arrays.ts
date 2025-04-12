@@ -3,37 +3,31 @@ type Ordering = -1 | 0 | 1;
 /**
  * Finds the first non-zero character in `slice`, skipping over leading zeros.
  *
- * @param index - The starting index to check.
+ * It continues skipping zeros until it reaches:
+ * - a non-zero character.
+ * - The end of `slice`.
  *
- * @param startingChar - The first character in the `slice` (must be `slice[index]`),
- *                       it is used to avoid redundant indexing operations for the first character.
+ * @param index - The starting index to check.
  *
  * @param slice - The full string being processed.
  *
  * @returns The index of the first non-zero character, or the length of `slice` if none found.
  *
- * @note If `startingChar === "0"`, it continues skipping zeros until it reaches:
- * - a non-zero character, which *typically* marks the start of a number.
- * - The end of `slice`.
+ * @remarks
+ * The caller must ensure that `slice[index]` is the first leading zero of the numeric section
+ * before calling this function.
  */
-function getFirstNonZeroChar(
-    index: number,
-    startingChar: string,
-    slice: string,
-): number {
+function getFirstNonZeroChar(index: number, slice: string): number {
     let i = index;
-    if (startingChar === "0") {
-        const len = slice.length;
-        while (true) {
-            i += 1; // skip the first zero since it's already checked
-            if (i < len && slice[i] === "0") {
-                continue;
-            } else {
-                return i;
-            }
+    const len = slice.length;
+    while (true) {
+        i += 1; // skip the first zero since it's already checked
+        if (i < len && slice[i] === "0") {
+            continue;
+        } else {
+            return i;
         }
     }
-    return i;
 }
 
 /**
@@ -185,15 +179,20 @@ function naturalCompare(
     const indexP2: [number] = [0];
     const s1_len = s1.length;
     const s2_len = s2.length;
+
     while (true) {
         if (index1 < s1_len) {
             // (Some(c1), Some(c2))
             if (index2 < s2_len) {
                 const c1 = s1[index1];
                 const c2 = s2[index2];
+
+                // Intentional: checking for zero after confirming digit reduces branches and improves branch prediction.
                 if (isAsciiDigit(c1) && isAsciiDigit(c2)) {
-                    indexP1[0] = getFirstNonZeroChar(index1, c1, s1);
-                    indexP2[0] = getFirstNonZeroChar(index2, c2, s2);
+                    // prettier-ignore
+                    { if (c1 === "0") { indexP1[0] = getFirstNonZeroChar(index1, s1); }
+                      if (c2 === "0") { indexP2[0] = getFirstNonZeroChar(index2, s2); } }
+
                     const numOrd = compareNumericParts(
                         s1,
                         s2,
