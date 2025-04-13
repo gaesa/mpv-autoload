@@ -6,7 +6,7 @@
 ## Features
 
 - **Automatic Playlist Generation**: The script automatically identifies and loads video and audio files from the same directory into your playlist.
-- **Mixed Method for File Type Identification**: The script now uses a combination of file extension checks and mimetype checks to identify file types. This approach is more reliable and still fast, as it uses extension checks for common media files and mimetype checks for the rest.
+- **Mixed Method for File Type Identification**: A combination of extension and mimetype checks is used to identify file types efficiently and reliably. This hybrid approach preserves the identification speed for well-known formats, while addressing the ambiguous (e.g., `.ts`) and uncommon cases via mimetype resolution.
 - **Easy Setup with Sensible Defaults**: The program works immediately upon installation with a default configuration that should be suitable for most use cases. However, it also offers flexible configuration options for advanced users who wish to customize their experience.
 
 ## Non-Features
