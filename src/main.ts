@@ -53,6 +53,11 @@ namespace Config {
     );
 
     export const excludedExts = new Set([
+        ".tmp",
+        ".old",
+        ".new",
+        ".part",
+        ".crdownload",
         ".vtt",
         ".ass",
         ".txt",
