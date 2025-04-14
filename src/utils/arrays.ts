@@ -264,7 +264,7 @@ export function naturalSort(
     strings: string[],
     caseSensitive: boolean = true,
 ): string[] {
-    let cmpNonDigit = caseSensitive
+    const cmpNonDigit = caseSensitive
         ? cmpChar
         : (a: string, b: string) => cmpChar(a.toLowerCase(), b.toLowerCase());
     strings.sort((a, b) => naturalCompare(a, b, cmpNonDigit));
