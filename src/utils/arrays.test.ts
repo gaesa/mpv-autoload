@@ -1,4 +1,6 @@
+// @ts-ignore
 import { naturalSort } from "./arrays.ts";
+// @ts-ignore
 import { assertEquals } from "../../vendor/deno.land/std@0.224.0/assert/assert_equals.ts";
 
 function check(expected: string[]) {
