@@ -9,7 +9,7 @@
     "analyze": "if [[ ! -f ./dist/stats.json ]]; then pnpm run build; fi && webpack-bundle-analyzer ./dist/stats.json"
   },
   "devDependencies": {
-    "@types/deno": "^2.2.0",
+    "@types/deno": "^2.3.0",
     "@types/mpv-script": "^0.32.8",
     "ts-loader": "^9.5.2",
     "webpack": "^5.99.5",
