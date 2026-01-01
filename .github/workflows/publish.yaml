@@ -44,7 +44,7 @@ jobs:
           args: -vv --unreleased --tag=${{ env.release_tag }} --strip=header
 
       - name: Release
-        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2
         with:
           tag_name: ${{ env.release_tag }}
           body: ${{ steps.git-cliff.outputs.content }}
